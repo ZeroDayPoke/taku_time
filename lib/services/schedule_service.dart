@@ -9,6 +9,8 @@ class ScheduleService {
   Map<String, List<Block>> generateWeeklyPlan() {
     Map<String, List<Block>> weeklyPlan = {};
 
+    DateTime today = DateTime.now();
+
     for (var day in daysOfWeek) {
       weeklyPlan[day] = [];
     }
@@ -51,7 +53,69 @@ class ScheduleService {
             userPreferences.weeklyOtakuBlocks,
             userPreferences.defaultOtakuDuration));
 
+    for (var day in daysOfWeek) {
+      DateTime dayDate = today
+          .add(Duration(days: daysOfWeek.indexOf(day) - today.weekday + 1));
+      weeklyPlan[day] = _arrangeDailyBlocks(weeklyPlan[day]!, dayDate);
+    }
+
     return weeklyPlan;
+  }
+
+  List<Block> _arrangeDailyBlocks(List<Block> blocks, DateTime dayDate) {
+    DateTime startTime = DateTime(dayDate.year, dayDate.month, dayDate.day)
+        .add(const Duration(days: 1));
+
+    List<Block> stressBlocks =
+        blocks.where((b) => b.category == BlockCategory.stress).toList();
+    List<Block> relaxBlocks =
+        blocks.where((b) => b.category == BlockCategory.relax).toList();
+    List<Block> arrangedBlocks = [];
+    List<Block> necessityBlocks =
+        blocks.where((b) => b.category == BlockCategory.inevitable).toList();
+
+    arrangedBlocks.addAll(necessityBlocks);
+
+    while (stressBlocks.isNotEmpty || relaxBlocks.isNotEmpty) {
+      if (stressBlocks.isNotEmpty) {
+        Block nextStressBlock = stressBlocks.removeAt(0);
+        nextStressBlock.startTime = _findNextAvailableTime(
+            arrangedBlocks, nextStressBlock.duration, startTime);
+        arrangedBlocks.add(nextStressBlock);
+        startTime = nextStressBlock.endTime;
+      }
+
+      if (relaxBlocks.isNotEmpty) {
+        Block nextRelaxBlock = relaxBlocks.removeAt(0);
+        nextRelaxBlock.startTime = _findNextAvailableTime(
+            arrangedBlocks, nextRelaxBlock.duration, startTime);
+        arrangedBlocks.add(nextRelaxBlock);
+        startTime = nextRelaxBlock.endTime;
+      }
+    }
+
+    arrangedBlocks.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    return arrangedBlocks;
+  }
+
+  DateTime _findNextAvailableTime(
+      List<Block> blocks, int duration, DateTime proposedStartTime) {
+    DateTime nextAvailableTime = proposedStartTime;
+
+    for (var block in blocks) {
+      if (nextAvailableTime.isBefore(block.startTime) &&
+          block.startTime.difference(nextAvailableTime).inMinutes >= duration) {
+        return nextAvailableTime;
+      }
+
+      if (!nextAvailableTime.isBefore(block.startTime) &&
+          !nextAvailableTime.isAfter(block.endTime)) {
+        nextAvailableTime = block.endTime;
+      }
+    }
+
+    return nextAvailableTime;
   }
 
   void _mergeBlockLists(
@@ -64,31 +128,47 @@ class ScheduleService {
   Map<String, List<Block>> allocateNecessityBlocks() {
     Map<String, List<Block>> necessityPlan = {};
     bool isFastingDay = userPreferences.isFasting;
-    DateTime startTime = DateTime.now();
+    DateTime today = DateTime.now();
 
-    for (var day in daysOfWeek) {
-      necessityPlan[day] = [
+    for (int i = 0; i < daysOfWeek.length; i++) {
+      DateTime dayDate = today
+          .add(Duration(days: i - today.weekday + 1))
+          .add(const Duration(days: 1));
+      DateTime endOfDay =
+          DateTime(dayDate.year, dayDate.month, dayDate.day, 23, 59);
+      DateTime startOfDay =
+          DateTime(dayDate.year, dayDate.month, dayDate.day, 0, 0);
+
+      necessityPlan[daysOfWeek[i]] = [
         RestBlock(
             duration: userPreferences.defaultRestDuration,
-            startTime: startTime),
+            startTime: startOfDay),
         TediumBlock(
             duration: userPreferences.defaultTediumDuration,
-            startTime: startTime),
+            startTime: startOfDay
+                .add(Duration(minutes: userPreferences.defaultRestDuration))),
       ];
 
-      int mealBlocksCount = isFastingDay ? 1 : 2;
-      necessityPlan[day]!.addAll(List.generate(
-        mealBlocksCount,
-        (_) => MealBlock(
+      DateTime lastMealTime = endOfDay.subtract(const Duration(minutes: 29));
+
+      if (!isFastingDay) {
+        DateTime mealTime = lastMealTime.subtract(const Duration(hours: 4));
+        necessityPlan[daysOfWeek[i]]?.add(MealBlock(
             duration: userPreferences.defaultMealDuration,
-            isFastingDay: isFastingDay,
-            startTime: startTime),
-      ));
+            isFastingDay: false,
+            startTime: mealTime));
+      }
+
+      necessityPlan[daysOfWeek[i]]?.add(MealBlock(
+          duration: userPreferences.defaultMealDuration,
+          isFastingDay: isFastingDay,
+          startTime: lastMealTime));
 
       if (userPreferences.isFasting) {
         isFastingDay = !isFastingDay;
       }
     }
+
     return necessityPlan;
   }
 
