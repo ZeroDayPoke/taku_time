@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/block.dart';
 
 class BlockCard extends StatelessWidget {
   final Block block;
+  final bool showStartTime;
 
-  const BlockCard({Key? key, required this.block}) : super(key: key);
+  const BlockCard({
+    Key? key,
+    required this.block,
+    this.showStartTime = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String startTimeFormatted = showStartTime
+        ? '${DateFormat('HH:mm').format(block.startTime)} - '
+        : '';
+
     return Container(
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -26,11 +36,9 @@ class BlockCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            block.type.toString().split('.').last,
+            '${block.type.toString().split('.').last} - $startTimeFormatted',
             style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(

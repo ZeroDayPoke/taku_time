@@ -3,6 +3,7 @@ import '../services/schedule_service.dart';
 import '../models/user_preferences.dart';
 import '../models/block.dart';
 import '../widgets/block_card.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,77 +13,121 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  late Map<String, List<Block>> weeklySchedule;
-  late int totalWeeklyDuration;
-  late Map<String, int> dailyBufferTime;
+  late Map<String, List<Block>> weeklySchedule = {};
+  late Map<BlockType, int> weeklySummary = {};
+  late UserPreferences preferences;
 
   @override
   void initState() {
     super.initState();
-    generateSchedule();
-    calculateMetrics();
+    loadPreferencesAndGenerateSchedule();
   }
 
-  void generateSchedule() {
-    UserPreferences defaultPreferences = UserPreferences.defaultPreferences();
-    ScheduleService scheduleService = ScheduleService(defaultPreferences);
-    weeklySchedule = scheduleService.generateWeeklyPlan();
-  }
-
-  void calculateMetrics() {
-    totalWeeklyDuration = 0;
-    dailyBufferTime = {};
-    int dailyAvailableHours = 24;
-
-    weeklySchedule.forEach((day, blocks) {
-      int dailyDuration = blocks.fold(0, (sum, block) => sum + block.duration);
-      totalWeeklyDuration += dailyDuration;
-      dailyBufferTime[day] = (dailyAvailableHours * 60) - dailyDuration;
+  void loadPreferencesAndGenerateSchedule() async {
+    preferences = await UserPreferences.loadPreferences();
+    ScheduleService scheduleService = ScheduleService(preferences);
+    setState(() {
+      weeklySchedule = scheduleService.generateWeeklyPlan();
+      calculateWeeklySummary();
     });
   }
 
-  String get weeklyTimeAllocationPercentage {
-    int totalWeeklyAvailableTime = 7 * 24 * 60;
-    double percentage = totalWeeklyDuration / totalWeeklyAvailableTime * 100;
-    return "${percentage.toStringAsFixed(2)}%";
+  void calculateWeeklySummary() {
+    weeklySummary = {};
+    for (var blocks in weeklySchedule.values) {
+      for (var block in blocks) {
+        weeklySummary.update(
+          block.type,
+          (value) => value + block.duration,
+          ifAbsent: () => block.duration,
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Weekly Schedule'),
-        backgroundColor: Colors.black87,
+        title: const Text('Home'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              ).then((_) => loadPreferencesAndGenerateSchedule());
+            },
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Back to Home'),
+          )
+        ],
       ),
-      backgroundColor: Colors.grey[900],
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Weekly Time Allocated: $weeklyTimeAllocationPercentage',
-              style: const TextStyle(color: Colors.white70),
-            ),
-          ),
+          _buildWeeklySummary(),
           Expanded(
             child: ListView.builder(
               itemCount: weeklySchedule.keys.length,
               itemBuilder: (context, index) {
                 String day = weeklySchedule.keys.elementAt(index);
-                List<Block> dayBlocks = weeklySchedule[day]!;
-                int bufferTime = dailyBufferTime[day] ?? 0;
+                List<Block> dayBlocks = weeklySchedule[day] ?? [];
 
                 return ExpansionTile(
-                  backgroundColor: Colors.grey[850],
                   title: Text(
-                    '$day (Buffer Time: $bufferTime min)',
-                    style: const TextStyle(color: Colors.white),
+                    day,
                   ),
-                  children: dayBlocks
-                      .map((block) => BlockCard(block: block))
-                      .toList(),
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: dayBlocks
+                            .map((block) => BlockCard(block: block))
+                            .toList(),
+                      ),
+                    ),
+                  ],
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeeklySummary() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Weekly Summary:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 100,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                for (BlockType type in weeklySummary.keys)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: BlockCard(
+                      block: Block(
+                        type: type,
+                        duration: weeklySummary[type] ?? 0,
+                        startTime: DateTime.now(),
+                      ),
+                      showStartTime: false,
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
