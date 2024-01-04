@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'schedule_event.dart';
 import 'schedule_state.dart';
-import '../services/old_sch_serv.dart';
+import '../services/schedule_service.dart';
 import '../bloc/block_bloc.dart';
 import '../bloc/block_event.dart';
 import '../bloc/block_state.dart';
@@ -53,8 +53,17 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       UpdateSchedule event, Emitter<ScheduleState> emit) async {
     emit(ScheduleLoadInProgress());
     try {
-      var schedule = scheduleService.generateWeeklyPlan(event.preferences);
-      emit(ScheduleLoadSuccess(schedule));
+      // Fetch the current list of blocks from the BlockBloc
+      final blockState = await blockBloc.stream
+          .firstWhere((state) => state is BlockLoadSuccess);
+
+      if (blockState is BlockLoadSuccess) {
+        var schedule = scheduleService.generateWeeklyPlan(
+            event.preferences, blockState.blocks);
+        emit(ScheduleLoadSuccess(schedule));
+      } else {
+        emit(ScheduleLoadFailure());
+      }
     } catch (_) {
       emit(ScheduleLoadFailure());
     }
