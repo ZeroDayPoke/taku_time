@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/schedule_service.dart';
-import '../models/user_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/schedule_bloc.dart';
+import '../bloc/schedule_state.dart';
+import '../bloc/user_preferences_event.dart';
+import '../bloc/user_preferences_bloc.dart';
 import '../models/block.dart';
 import '../widgets/block_card.dart';
 import 'settings_screen.dart';
@@ -15,7 +18,6 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   late Map<String, List<Block>> weeklySchedule = {};
   late Map<BlockType, int> weeklySummary = {};
-  late UserPreferences preferences;
 
   @override
   void initState() {
@@ -23,26 +25,9 @@ class HomeScreenState extends State<HomeScreen> {
     loadPreferencesAndGenerateSchedule();
   }
 
-  void loadPreferencesAndGenerateSchedule() async {
-    preferences = await UserPreferences.loadPreferences();
-    ScheduleService scheduleService = ScheduleService(preferences);
-    setState(() {
-      weeklySchedule = scheduleService.generateWeeklyPlan();
-      calculateWeeklySummary();
-    });
-  }
-
-  void calculateWeeklySummary() {
-    weeklySummary = {};
-    for (var blocks in weeklySchedule.values) {
-      for (var block in blocks) {
-        weeklySummary.update(
-          block.type,
-          (value) => value + block.duration,
-          ifAbsent: () => block.duration,
-        );
-      }
-    }
+  void loadPreferencesAndGenerateSchedule() {
+    // Dispatch LoadUserPreferences event
+    BlocProvider.of<UserPreferencesBloc>(context).add(LoadUserPreferences());
   }
 
   @override
@@ -60,43 +45,70 @@ class HomeScreenState extends State<HomeScreen> {
               ).then((_) => loadPreferencesAndGenerateSchedule());
             },
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Back to Home'),
-          )
         ],
       ),
-      body: Column(
-        children: [
-          _buildWeeklySummary(),
-          Expanded(
-            child: ListView.builder(
-              itemCount: weeklySchedule.keys.length,
-              itemBuilder: (context, index) {
-                String day = weeklySchedule.keys.elementAt(index);
-                List<Block> dayBlocks = weeklySchedule[day] ?? [];
-
-                return ExpansionTile(
-                  title: Text(
-                    day,
-                  ),
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: dayBlocks
-                            .map((block) => BlockCard(block: block))
-                            .toList(),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
+      body: BlocBuilder<ScheduleBloc, ScheduleState>(
+        builder: (context, state) {
+          if (state is ScheduleLoadSuccess) {
+            weeklySchedule = state.weeklySchedule;
+            calculateWeeklySummary();
+            return _buildScheduleContent();
+          } else if (state is ScheduleLoadInProgress) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            // Handle failure or initial state
+            return Center(
+              child: Text(state is ScheduleLoadFailure
+                  ? 'Failed to load schedule'
+                  : 'Loading...'),
+            );
+          }
+        },
       ),
     );
+  }
+
+  Widget _buildScheduleContent() {
+    return Column(
+      children: [
+        _buildWeeklySummary(),
+        Expanded(
+          child: ListView.builder(
+            itemCount: weeklySchedule.keys.length,
+            itemBuilder: (context, index) {
+              String day = weeklySchedule.keys.elementAt(index);
+              List<Block> dayBlocks = weeklySchedule[day] ?? [];
+              return ExpansionTile(
+                title: Text(day),
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: dayBlocks
+                          .map((block) => BlockCard(block: block))
+                          .toList(),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  void calculateWeeklySummary() {
+    weeklySummary = {};
+    for (var blocks in weeklySchedule.values) {
+      for (var block in blocks) {
+        weeklySummary.update(
+          block.type,
+          (value) => value + block.duration,
+          ifAbsent: () => block.duration,
+        );
+      }
+    }
   }
 
   Widget _buildWeeklySummary() {

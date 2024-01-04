@@ -2,9 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class UserPreferences {
-  // Declare all the preferences
-  bool enableHighIntensityExercise;
-  int weeklyHighIntensityExerciseBlocks;
+  // Default Block Durations
   int defaultDeepWorkDuration;
   int defaultLearningDuration;
   int defaultSocialDuration;
@@ -17,22 +15,63 @@ class UserPreferences {
   int defaultMealDuration;
   int defaultRestDuration;
   int defaultTediumDuration;
+
+  // Inevitable Recurring Events
+  DateTime mealTime;
+  DateTime sleepTime;
+
+  // Rest Block Inclusions
   bool doOutdoor;
   int weeklyOutdoorBlocks;
   bool doMeditation;
   int dailyMeditationSessions;
+  bool doOtaku;
+  int weeklyOtakuBlocks;
+  bool doExercise;
+  bool enableHighIntensityExercise;
+  int weeklyHighIntensityExerciseBlocks;
+  bool doTedium;
+  bool doFlux;
+  int weeklyFluxBlocks;
+  bool doShallowWork;
+  int weeklyShallowWorkBlocks;
+  bool doSocial;
+  int weeklySocialBlocks;
+
+  // Stress Blocks
   int dailyLearningSessions;
   int dailyDeepWorkSessions;
-  int weeklyShallowWorkBlocks;
-  int weeklySocialBlocks;
-  int weeklyFluxBlocks;
-  int weeklyOtakuBlocks;
+
+  // Extra
   bool isFasting;
   int startDay;
+  int mealTimeHour;
+  int mealTimeMinute;
+  int sleepTimeHour;
+  int sleepTimeMinute;
 
-  // Constructor with default values
   UserPreferences({
+    // Include All Modules by Default
+    this.doExercise = true,
     this.enableHighIntensityExercise = true,
+    this.isFasting = true,
+    this.doMeditation = true,
+    this.doOutdoor = true,
+    this.doOtaku = true,
+    this.doTedium = true,
+    this.doFlux = true,
+    this.doShallowWork = true,
+    this.doSocial = true,
+
+    // Times
+    DateTime? mealTime,
+    DateTime? sleepTime,
+    this.mealTimeHour = 20,
+    this.mealTimeMinute = 0,
+    this.sleepTimeHour = 0,
+    this.sleepTimeMinute = 0,
+
+    // Default Values
     this.weeklyHighIntensityExerciseBlocks = 3,
     this.defaultDeepWorkDuration = 90,
     this.defaultLearningDuration = 90,
@@ -46,9 +85,7 @@ class UserPreferences {
     this.defaultMealDuration = 30,
     this.defaultRestDuration = 480,
     this.defaultTediumDuration = 30,
-    this.doOutdoor = true,
     this.weeklyOutdoorBlocks = 2,
-    this.doMeditation = true,
     this.dailyMeditationSessions = 1,
     this.dailyLearningSessions = 2,
     this.dailyDeepWorkSessions = 4,
@@ -56,9 +93,9 @@ class UserPreferences {
     this.weeklySocialBlocks = 1,
     this.weeklyFluxBlocks = 3,
     this.weeklyOtakuBlocks = 10,
-    this.isFasting = true,
     this.startDay = 1,
-  });
+  })  : mealTime = mealTime ?? DateTime(2024, 0, 0, 20, 0),
+        sleepTime = sleepTime ?? DateTime(2024, 0, 0, 0, 0);
 
   // Convert to Map for saving
   Map<String, dynamic> toMap() => {
@@ -88,6 +125,16 @@ class UserPreferences {
         'weeklyOtakuBlocks': weeklyOtakuBlocks,
         'isFasting': isFasting,
         'startDay': startDay,
+        'doOtaku': doOtaku,
+        'doExercise': doExercise,
+        'doTedium': doTedium,
+        'doFlux': doFlux,
+        'doShallowWork': doShallowWork,
+        'doSocial': doSocial,
+        'mealTimeHour': mealTime.hour,
+        'mealTimeMinute': mealTime.minute,
+        'sleepTimeHour': sleepTime.hour,
+        'sleepTimeMinute': sleepTime.minute,
       };
 
   // Create from Map
@@ -119,6 +166,20 @@ class UserPreferences {
         weeklyOtakuBlocks: map['weeklyOtakuBlocks'] ?? 10,
         isFasting: map['isFasting'] ?? true,
         startDay: map['startDay'] ?? 1,
+        doOtaku: map['doOtaku'] ?? true,
+        doExercise: map['doExercise'] ?? true,
+        doTedium: map['doTedium'] ?? true,
+        doFlux: map['doFlux'] ?? true,
+        doShallowWork: map['doShallowWork'] ?? true,
+        doSocial: map['doSocial'] ?? true,
+        mealTimeHour: map['mealTimeHour'] ?? 20,
+        mealTimeMinute: map['mealTimeMinute'] ?? 0,
+        sleepTimeHour: map['sleepTimeHour'] ?? 0,
+        sleepTimeMinute: map['sleepTimeMinute'] ?? 0,
+        mealTime: DateTime(
+            2024, 0, 0, map['mealTimeHour'] ?? 20, map['mealTimeMinute'] ?? 0),
+        sleepTime: DateTime(
+            2024, 0, 0, map['sleepTimeHour'] ?? 0, map['sleepTimeMinute'] ?? 0),
       );
 
   // Load preferences
@@ -170,6 +231,19 @@ class UserPreferences {
       weeklyFluxBlocks: 3,
       weeklyOtakuBlocks: 10,
       isFasting: true,
+      startDay: 1,
+      doOtaku: true,
+      doExercise: true,
+      doTedium: true,
+      doFlux: true,
+      doShallowWork: true,
+      doSocial: true,
+      mealTime: DateTime(2024, 0, 0, 20, 0),
+      sleepTime: DateTime(2024, 0, 0, 0, 0),
+      mealTimeHour: 20,
+      mealTimeMinute: 0,
+      sleepTimeHour: 0,
+      sleepTimeMinute: 0,
     );
   }
 }

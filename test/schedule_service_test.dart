@@ -8,13 +8,15 @@ void main() {
     late ScheduleService service;
     late UserPreferences preferences;
     late Map<String, List<Block>> schedule;
+    late List<Block> blocks;
 
     setUp(() {
       preferences = UserPreferences(
           // test defaults
           );
+      blocks = [];
       service = ScheduleService(preferences);
-      schedule = service.generateWeeklyPlan();
+      schedule = service.generateWeeklyPlan(preferences, blocks);
     });
 
     test('Generates Correct Number of Deep Work Blocks', () {
