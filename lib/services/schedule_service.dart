@@ -1,21 +1,23 @@
-import 'package:taku_time/models/user_preferences.dart';
+import 'package:taku_time/models/user_preferences_builder.dart';
 import 'package:taku_time/models/block.dart';
 import 'package:taku_time/services/block_allocators.dart';
 import 'package:taku_time/utils/schedule_validator.dart';
+import 'package:taku_time/models/user_preferences.dart';
 
 class ScheduleService {
-  final UserPreferences userPreferences;
-  final ScheduleValidator scheduleValidator;
+  final UserPreferencesBuilder userPreferencesBuilder;
+  late final ScheduleValidator scheduleValidator;
 
-  ScheduleService(this.userPreferences)
-      : scheduleValidator = ScheduleValidator(userPreferences);
+  ScheduleService(this.userPreferencesBuilder) {
+    scheduleValidator = ScheduleValidator(userPreferencesBuilder);
+  }
 
-  Map<String, List<Block>> generateWeeklyPlan(
-      UserPreferences userPreferences, List<Block> blocks) {
+  Map<String, List<Block>> generateWeeklyPlan(List<Block> blocks) {
     if (!scheduleValidator.isScheduleViable()) {
       throw Exception('User preferences lead to a non-viable weekly schedule.');
     }
 
+    UserPreferences userPreferences = userPreferencesBuilder.build();
     Map<String, List<Block>> weeklyPlan = {};
     DateTime today = DateTime.now();
 

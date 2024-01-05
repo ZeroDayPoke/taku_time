@@ -5,18 +5,18 @@ import '../services/schedule_service.dart';
 import '../bloc/block_bloc.dart';
 import '../bloc/block_event.dart';
 import '../bloc/block_state.dart';
-import '../bloc/user_preferences_bloc.dart';
-import '../bloc/user_preferences_event.dart';
-import '../bloc/user_preferences_state.dart';
+import '../bloc/user_preferences_builder_bloc.dart';
+import '../bloc/user_preferences_builder_event.dart';
+import '../bloc/user_preferences_builder_state.dart';
 
 class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
   final BlockBloc blockBloc;
-  final UserPreferencesBloc userPreferencesBloc;
+  final UserPreferencesBuilderBloc userPreferencesBuilderBloc;
   final ScheduleService scheduleService;
 
   ScheduleBloc({
     required this.blockBloc,
-    required this.userPreferencesBloc,
+    required this.userPreferencesBuilderBloc,
     required this.scheduleService,
   }) : super(ScheduleInitial()) {
     on<LoadSchedule>(_onLoadSchedule);
@@ -25,21 +25,19 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
 
   void _onLoadSchedule(LoadSchedule event, Emitter<ScheduleState> emit) async {
     blockBloc.add(LoadBlocks());
-    userPreferencesBloc.add(LoadUserPreferences());
+    userPreferencesBuilderBloc.add(LoadUserPreferencesBuilder());
 
     try {
       final blockState = await blockBloc.stream
           .firstWhere((state) => state is BlockLoadSuccess);
-      final userPreferencesState = await userPreferencesBloc.stream
-          .firstWhere((state) => state is UserPreferencesLoaded);
+      final userPreferencesState = await userPreferencesBuilderBloc.stream
+          .firstWhere((state) => state is UserPreferencesBuilderLoaded);
 
       if (blockState is BlockLoadSuccess &&
-          userPreferencesState is UserPreferencesLoaded) {
+          userPreferencesState is UserPreferencesBuilderLoaded) {
         final blocks = blockState.blocks;
-        final userPreferences = userPreferencesState.preferences;
 
-        final schedule =
-            scheduleService.generateWeeklyPlan(userPreferences, blocks);
+        final schedule = scheduleService.generateWeeklyPlan(blocks);
         emit(ScheduleLoadSuccess(schedule));
       } else {
         emit(ScheduleLoadFailure());
@@ -53,13 +51,11 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
       UpdateSchedule event, Emitter<ScheduleState> emit) async {
     emit(ScheduleLoadInProgress());
     try {
-      // Fetch the current list of blocks from the BlockBloc
       final blockState = await blockBloc.stream
           .firstWhere((state) => state is BlockLoadSuccess);
 
       if (blockState is BlockLoadSuccess) {
-        var schedule = scheduleService.generateWeeklyPlan(
-            event.preferences, blockState.blocks);
+        var schedule = scheduleService.generateWeeklyPlan(blockState.blocks);
         emit(ScheduleLoadSuccess(schedule));
       } else {
         emit(ScheduleLoadFailure());

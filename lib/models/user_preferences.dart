@@ -1,54 +1,51 @@
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-
 class UserPreferences {
   // Default Block Durations
-  int defaultDeepWorkDuration;
-  int defaultLearningDuration;
-  int defaultSocialDuration;
-  int defaultFluxDuration;
-  int defaultShallowWorkDuration;
-  int defaultMeditationDuration;
-  int defaultOutdoorDuration;
-  int defaultOtakuDuration;
-  int defaultExerciseDuration;
-  int defaultMealDuration;
-  int defaultRestDuration;
-  int defaultTediumDuration;
+  final int defaultDeepWorkDuration;
+  final int defaultLearningDuration;
+  final int defaultSocialDuration;
+  final int defaultFluxDuration;
+  final int defaultShallowWorkDuration;
+  final int defaultMeditationDuration;
+  final int defaultOutdoorDuration;
+  final int defaultOtakuDuration;
+  final int defaultExerciseDuration;
+  final int defaultMealDuration;
+  final int defaultRestDuration;
+  final int defaultTediumDuration;
 
   // Inevitable Recurring Events
-  DateTime mealTime;
-  DateTime sleepTime;
+  final DateTime mealTime;
+  final DateTime sleepTime;
 
   // Rest Block Inclusions
-  bool doOutdoor;
-  int weeklyOutdoorBlocks;
-  bool doMeditation;
-  int dailyMeditationSessions;
-  bool doOtaku;
-  int weeklyOtakuBlocks;
-  bool doExercise;
-  bool enableHighIntensityExercise;
-  int weeklyHighIntensityExerciseBlocks;
-  bool doTedium;
-  bool doFlux;
-  int weeklyFluxBlocks;
-  bool doShallowWork;
-  int weeklyShallowWorkBlocks;
-  bool doSocial;
-  int weeklySocialBlocks;
+  final bool doOutdoor;
+  final int weeklyOutdoorBlocks;
+  final bool doMeditation;
+  final int dailyMeditationSessions;
+  final bool doOtaku;
+  final int weeklyOtakuBlocks;
+  final bool doExercise;
+  final bool enableHighIntensityExercise;
+  final int weeklyHighIntensityExerciseBlocks;
+  final bool doTedium;
+  final bool doFlux;
+  final int weeklyFluxBlocks;
+  final bool doShallowWork;
+  final int weeklyShallowWorkBlocks;
+  final bool doSocial;
+  final int weeklySocialBlocks;
 
   // Stress Blocks
-  int dailyLearningSessions;
-  int dailyDeepWorkSessions;
+  final int dailyLearningSessions;
+  final int dailyDeepWorkSessions;
 
   // Extra
-  bool isFasting;
-  int startDay;
-  int mealTimeHour;
-  int mealTimeMinute;
-  int sleepTimeHour;
-  int sleepTimeMinute;
+  final bool isFasting;
+  final int startDay;
+  final int mealTimeHour;
+  final int mealTimeMinute;
+  final int sleepTimeHour;
+  final int sleepTimeMinute;
 
   UserPreferences({
     // Include All Modules by Default
@@ -181,28 +178,6 @@ class UserPreferences {
         sleepTime: DateTime(
             2024, 0, 0, map['sleepTimeHour'] ?? 0, map['sleepTimeMinute'] ?? 0),
       );
-
-  // Load preferences
-  static Future<UserPreferences> loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? userPrefsString = prefs.getString('userPreferences');
-    return userPrefsString != null
-        ? UserPreferences.fromMap(json.decode(userPrefsString))
-        : UserPreferences();
-  }
-
-  // Save preferences
-  Future<void> savePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('userPreferences', json.encode(toMap()));
-  }
-
-  // Generic method to update a preference
-  void updatePreference(String key, dynamic value) {
-    Map<String, dynamic> prefMap = toMap();
-    prefMap[key] = value;
-    UserPreferences.fromMap(prefMap).savePreferences();
-  }
 
   static UserPreferences defaultPreferences() {
     return UserPreferences(

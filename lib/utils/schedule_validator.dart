@@ -1,11 +1,14 @@
+import '../models/user_preferences_builder.dart';
 import '../models/user_preferences.dart';
 
 class ScheduleValidator {
   static const int minutesPerDay = 24 * 60;
 
-  final UserPreferences preferences;
+  final UserPreferencesBuilder userPreferencesBuilder;
 
-  ScheduleValidator(this.preferences);
+  ScheduleValidator(this.userPreferencesBuilder);
+
+  UserPreferences get preferences => userPreferencesBuilder.build();
 
   int get dailyDeepWorkTime =>
       preferences.dailyDeepWorkSessions * preferences.defaultDeepWorkDuration;

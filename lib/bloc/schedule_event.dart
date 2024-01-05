@@ -1,15 +1,11 @@
-import '../models/user_preferences.dart';
+import 'package:taku_time/models/user_preferences_builder.dart';
 
 abstract class ScheduleEvent {}
 
-class LoadSchedule extends ScheduleEvent {
-  final UserPreferences preferences;
-
-  LoadSchedule(this.preferences);
-}
+class LoadSchedule extends ScheduleEvent {}
 
 class UpdateSchedule extends ScheduleEvent {
-  final UserPreferences preferences;
+  final UserPreferencesBuilder userPreferencesBuilder;
 
-  UpdateSchedule(this.preferences);
+  UpdateSchedule(this.userPreferencesBuilder);
 }
