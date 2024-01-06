@@ -1,64 +1,85 @@
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-import '../models/block.dart';
+// file: database_helper.dart
+import 'my_database.dart';
+import '../models/block.dart' as block_model;
+import '../models/schedule.dart' as schedule_model;
+import 'package:drift/drift.dart';
 
 class DatabaseHelper {
-  static const _databaseName = "taku_time.db";
-  static const _databaseVersion = 1;
-
-  DatabaseHelper._privateConstructor();
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
-
-  static Database? _database;
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
-  }
-
-  _initDatabase() async {
-    String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
-  }
-
-  Future _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE blocks(
-        id INTEGER PRIMARY KEY,
-        type TEXT NOT NULL,
-        duration INTEGER NOT NULL,
-        startTime TEXT NOT NULL,
-        isScheduled INTEGER NOT NULL,
-        origin TEXT NOT NULL,
-        priority INTEGER NOT NULL,
-        note TEXT,
-        isRecurring INTEGER NOT NULL
-      )
-    ''');
-  }
-
-  Future<int> insertBlock(Block block) async {
-    Database db = await database;
-    return await db.insert('blocks', block.toMap());
-  }
+  final MyDatabase _db = MyDatabase.instance;
 
   Future<List<Block>> getBlocks() async {
-    Database db = await database;
-    List<Map> maps = await db.query('blocks');
-    return List.generate(maps.length, (i) {
-      return Block.fromMap(maps[i] as Map<String, dynamic>);
-    });
+    return _db.getAllBlocks();
   }
 
-  Future<int> updateBlock(Block block) async {
-    Database db = await database;
-    return await db.update('blocks', block.toMap(),
-        where: 'id = ?', whereArgs: [block.id]);
+  Future<void> insertBlock(block_model.Block block) async {
+    return _db.insertBlock(BlocksCompanion.insert(
+      type: block.type.toString(),
+      duration: block.duration,
+      minuteOfWeek: block.minuteOfWeek,
+      isScheduled: block.isScheduled,
+      origin: block.origin.toString(),
+      priority: block.priority,
+      note: Value(block.note),
+      isRecurring: block.isRecurring,
+    ));
   }
 
-  Future<int> deleteBlock(int id) async {
-    Database db = await database;
-    return await db.delete('blocks', where: 'id = ?', whereArgs: [id]);
+  Future<void> updateBlock(block_model.Block block) async {
+    return _db.updateBlock(BlocksCompanion.insert(
+      id: Value(block.id),
+      type: block.type.toString(),
+      duration: block.duration,
+      minuteOfWeek: block.minuteOfWeek,
+      isScheduled: block.isScheduled,
+      origin: block.origin.toString(),
+      priority: block.priority,
+      note: Value(block.note),
+      isRecurring: block.isRecurring,
+    ));
+  }
+
+  Future<void> deleteBlock(int id) async {
+    return _db.deleteBlock(id);
+  }
+
+  Future<List<Block>> getBlocksOfType(String type) async {
+    return _db.getBlocksOfType(type);
+  }
+
+  Future<List<Schedule>> getSchedules() async {
+    return _db.getAllSchedules();
+  }
+
+  Future<void> insertSchedule(schedule_model.Schedule schedule) async {
+    final insertableSchedule = SchedulesCompanion.insert(
+      name: schedule.name,
+      startDate: schedule.startDate.toIso8601String(),
+      isActive: schedule.isActive,
+      generatedOn: schedule.generatedOn.toIso8601String(),
+    );
+    return _db.insertSchedule(insertableSchedule);
+  }
+
+  Future<void> updateSchedule(schedule_model.Schedule schedule) async {
+    final insertableSchedule = SchedulesCompanion.insert(
+      id: Value(schedule.id),
+      name: schedule.name,
+      startDate: schedule.startDate.toIso8601String(),
+      isActive: schedule.isActive,
+      generatedOn: schedule.generatedOn.toIso8601String(),
+    );
+    return _db.updateSchedule(insertableSchedule);
+  }
+
+  Future<void> deleteSchedule(int id) async {
+    return _db.deleteSchedule(id);
+  }
+
+  Future<void> setActiveSchedule(int scheduleId) async {
+    await _db.customSetActiveSchedule(scheduleId);
+  }
+
+  Future<Schedule?> getActiveSchedule() async {
+    return _db.getActiveSchedule();
   }
 }
