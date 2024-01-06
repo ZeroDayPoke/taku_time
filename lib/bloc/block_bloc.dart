@@ -1,12 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'block_event.dart';
 import 'block_state.dart';
-import '../database/database_helper.dart';
+import '../services/block_allocators.dart';
+import '../services/block_service.dart';
 
 class BlockBloc extends Bloc<BlockEvent, BlockState> {
-  final DatabaseHelper _databaseHelper;
+  final BlockService blockService;
 
-  BlockBloc(this._databaseHelper) : super(BlockInitial()) {
+  BlockBloc(this.blockService) : super(BlockInitial()) {
     on<LoadBlocks>(_onLoadBlocks);
     on<AddBlock>(_onAddBlock);
     on<UpdateBlock>(_onUpdateBlock);
@@ -19,7 +20,7 @@ class BlockBloc extends Bloc<BlockEvent, BlockState> {
   ) async {
     emit(BlockLoadInProgress());
     try {
-      final blocks = await _databaseHelper.getBlocks();
+      final blocks = await blockService.getBlocks();
       emit(BlockLoadSuccess(blocks));
     } catch (_) {
       emit(BlockLoadFailure());
@@ -30,7 +31,7 @@ class BlockBloc extends Bloc<BlockEvent, BlockState> {
     AddBlock event,
     Emitter<BlockState> emit,
   ) async {
-    await _databaseHelper.insertBlock(event.block);
+    await blockService.insertBlock(event.block);
     add(LoadBlocks());
   }
 
@@ -38,7 +39,7 @@ class BlockBloc extends Bloc<BlockEvent, BlockState> {
     UpdateBlock event,
     Emitter<BlockState> emit,
   ) async {
-    await _databaseHelper.updateBlock(event.updatedBlock);
+    await blockService.updateBlock(event.updatedBlock);
     add(LoadBlocks());
   }
 
@@ -46,7 +47,7 @@ class BlockBloc extends Bloc<BlockEvent, BlockState> {
     DeleteBlock event,
     Emitter<BlockState> emit,
   ) async {
-    await _databaseHelper.deleteBlock(event.id);
+    await blockService.deleteBlock(event.id);
     add(LoadBlocks());
   }
 }

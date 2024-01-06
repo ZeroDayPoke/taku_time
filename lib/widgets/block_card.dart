@@ -14,9 +14,7 @@ class BlockCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String startTimeFormatted = showStartTime
-        ? '${DateFormat('HH:mm').format(block.startTime)} - '
-        : '';
+    String startTimeFormatted = block.getFormattedTime();
 
     return Container(
       padding: const EdgeInsets.all(12),

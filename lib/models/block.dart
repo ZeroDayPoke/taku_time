@@ -42,41 +42,26 @@ extension BlockTypeExtension on BlockType {
 /// An enum to specify the origin of a block.
 enum BlockOrigin { generated, custom }
 
-/// Class representing a block in the schedule.
 class Block {
-  int? id;
+  int id;
   BlockType type;
   int duration;
-  DateTime startTime;
+  int minuteOfWeek;
   bool isScheduled;
   BlockOrigin origin;
-  int priority;
   String? note;
   bool isRecurring;
 
-  /// Constructs a [Block] with the given parameters.
-  ///
-  /// [id] is an optional identifier for the block.
-  /// [type] specifies the type of the block.
-  /// [duration] specifies the duration of the block in minutes.
-  /// [startTime] is the start time of the block.
-  /// [isScheduled] indicates if the block is scheduled (default: false).
-  /// [origin] specifies the origin of the block (default: generated).
-  /// [priority] indicates the priority level of the block (default depends on type).
-  /// [note] is an optional field for user notes.
-  /// [isRecurring] indicates if the block is recurring (default: false).
   Block({
-    this.id,
+    this.id = -1,
     required this.type,
     required this.duration,
-    required this.startTime,
+    this.minuteOfWeek = -1,
     this.isScheduled = false,
     this.origin = BlockOrigin.generated,
-    String? note,
-    bool isRecurring = false,
-  })  : priority = _determinePriority(type),
-        note = note ?? '',
-        isRecurring = isRecurring ?? false;
+    this.note = '',
+    this.isRecurring = false,
+  });
 
   /// Determines the priority level based on the block type.
   static int _determinePriority(BlockType type) {
@@ -91,13 +76,42 @@ class Block {
     }
   }
 
+  int get priority => _determinePriority(type);
+
+  /// Converts the minute of the week to a more human-readable format.
+  /// Example: 1500 -> "Tuesday, 1:00 AM"
+  String getFormattedTime() {
+    if (minuteOfWeek == -1) {
+      return "Unscheduled";
+    }
+
+    final daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ];
+
+    int dayIndex = minuteOfWeek ~/ (24 * 60);
+    int hour = (minuteOfWeek % (24 * 60)) ~/ 60;
+    int minute = minuteOfWeek % 60;
+
+    String period = hour >= 12 ? "PM" : "AM";
+    hour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
+    return "${daysOfWeek[dayIndex]}, ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period";
+  }
+
   /// Converts the block to a map for storage or transmission.
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'type': type.toString().split('.').last,
       'duration': duration,
-      'startTime': startTime.toIso8601String(),
+      'minuteOfWeek': minuteOfWeek,
       'category': type.category.toString().split('.').last,
       'isScheduled': isScheduled ? 1 : 0,
       'origin': origin.toString().split('.').last,
@@ -114,7 +128,7 @@ class Block {
       type: BlockType.values
           .firstWhere((e) => e.toString().split('.').last == map['type']),
       duration: map['duration'],
-      startTime: DateTime.parse(map['startTime']),
+      minuteOfWeek: map['minuteOfWeek'],
       isScheduled: map['isScheduled'] == 1,
       origin: BlockOrigin.values
           .firstWhere((e) => e.toString().split('.').last == map['origin']),
@@ -123,7 +137,20 @@ class Block {
     );
   }
 
-  DateTime get endTime => startTime.add(Duration(minutes: duration));
+  Block clone() {
+    return Block(
+      id: id,
+      type: type,
+      duration: duration,
+      minuteOfWeek: minuteOfWeek,
+      isScheduled: isScheduled,
+      origin: origin,
+      note: note,
+      isRecurring: isRecurring,
+    );
+  }
+
+  int get endTime => minuteOfWeek + duration;
 }
 
 class ExerciseBlock extends Block {
@@ -132,8 +159,9 @@ class ExerciseBlock extends Block {
   ExerciseBlock({
     required BlockType type,
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     required this.isHighIntensity,
+    int priority = 3,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -141,7 +169,7 @@ class ExerciseBlock extends Block {
   }) : super(
           type: type,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -155,7 +183,7 @@ class MealBlock extends Block {
   MealBlock({
     required this.isFastingDay,
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -163,7 +191,7 @@ class MealBlock extends Block {
   }) : super(
           type: BlockType.meal,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -174,7 +202,7 @@ class MealBlock extends Block {
 class RestBlock extends Block {
   RestBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -182,7 +210,7 @@ class RestBlock extends Block {
   }) : super(
           type: BlockType.rest,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -193,7 +221,7 @@ class RestBlock extends Block {
 class MeditationBlock extends Block {
   MeditationBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -201,7 +229,7 @@ class MeditationBlock extends Block {
   }) : super(
           type: BlockType.meditation,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -212,7 +240,7 @@ class MeditationBlock extends Block {
 class FluxBlock extends Block {
   FluxBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -220,7 +248,7 @@ class FluxBlock extends Block {
   }) : super(
           type: BlockType.flux,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -231,7 +259,7 @@ class FluxBlock extends Block {
 class TediumBlock extends Block {
   TediumBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -239,7 +267,7 @@ class TediumBlock extends Block {
   }) : super(
           type: BlockType.tedium,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -250,7 +278,7 @@ class TediumBlock extends Block {
 class ShallowWorkBlock extends Block {
   ShallowWorkBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -258,7 +286,7 @@ class ShallowWorkBlock extends Block {
   }) : super(
           type: BlockType.shallowWork,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -269,7 +297,7 @@ class ShallowWorkBlock extends Block {
 class SocialBlock extends Block {
   SocialBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -277,7 +305,7 @@ class SocialBlock extends Block {
   }) : super(
           type: BlockType.social,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -288,7 +316,7 @@ class SocialBlock extends Block {
 class OutdoorBlock extends Block {
   OutdoorBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -296,7 +324,7 @@ class OutdoorBlock extends Block {
   }) : super(
           type: BlockType.outdoor,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -307,7 +335,7 @@ class OutdoorBlock extends Block {
 class LearningBlock extends Block {
   LearningBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -315,7 +343,7 @@ class LearningBlock extends Block {
   }) : super(
           type: BlockType.learning,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -326,7 +354,7 @@ class LearningBlock extends Block {
 class DeepWorkBlock extends Block {
   DeepWorkBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -334,7 +362,7 @@ class DeepWorkBlock extends Block {
   }) : super(
           type: BlockType.deepWork,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
@@ -345,7 +373,7 @@ class DeepWorkBlock extends Block {
 class OtakuBlock extends Block {
   OtakuBlock({
     required int duration,
-    required DateTime startTime,
+    required int minuteOfWeek,
     bool isScheduled = false,
     BlockOrigin origin = BlockOrigin.generated,
     String? note,
@@ -353,7 +381,7 @@ class OtakuBlock extends Block {
   }) : super(
           type: BlockType.otaku,
           duration: duration,
-          startTime: startTime,
+          minuteOfWeek: minuteOfWeek,
           isScheduled: isScheduled,
           origin: origin,
           note: note ?? '',
