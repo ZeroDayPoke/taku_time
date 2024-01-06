@@ -17,6 +17,8 @@ class UserPreferencesBuilderBloc
     on<UpdateUserPreference>(_onUpdateUserPreference);
     on<ResetUserPreferences>(_onResetUserPreferences);
     on<SaveUserPreferences>(_onSaveUserPreferences);
+
+    add(LoadUserPreferencesBuilder());
   }
 
   void _onLoadUserPreferencesBuilder(
@@ -45,7 +47,7 @@ class UserPreferencesBuilderBloc
     if (_currentBuilder != null) {
       var updatedBuilder =
           _currentBuilder!.updatePreference(event.key, event.value);
-      emit(UserPreferencesBuilderLoaded(updatedBuilder));
+      emit(UserPreferencesBuilderUpdated(updatedBuilder));
     }
   }
 

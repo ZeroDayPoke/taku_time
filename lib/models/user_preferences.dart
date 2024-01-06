@@ -1,5 +1,4 @@
 class UserPreferences {
-  // Default Block Durations
   final int defaultDeepWorkDuration;
   final int defaultLearningDuration;
   final int defaultSocialDuration;
@@ -12,12 +11,6 @@ class UserPreferences {
   final int defaultMealDuration;
   final int defaultRestDuration;
   final int defaultTediumDuration;
-
-  // Inevitable Recurring Events
-  final DateTime mealTime;
-  final DateTime sleepTime;
-
-  // Rest Block Inclusions
   final bool doOutdoor;
   final int weeklyOutdoorBlocks;
   final bool doMeditation;
@@ -34,12 +27,8 @@ class UserPreferences {
   final int weeklyShallowWorkBlocks;
   final bool doSocial;
   final int weeklySocialBlocks;
-
-  // Stress Blocks
   final int dailyLearningSessions;
   final int dailyDeepWorkSessions;
-
-  // Extra
   final bool isFasting;
   final int startDay;
   final int mealTimeHour;
@@ -61,8 +50,6 @@ class UserPreferences {
     this.doSocial = true,
 
     // Times
-    DateTime? mealTime,
-    DateTime? sleepTime,
     this.mealTimeHour = 20,
     this.mealTimeMinute = 0,
     this.sleepTimeHour = 0,
@@ -91,8 +78,7 @@ class UserPreferences {
     this.weeklyFluxBlocks = 3,
     this.weeklyOtakuBlocks = 10,
     this.startDay = 1,
-  })  : mealTime = mealTime ?? DateTime(2024, 0, 0, 20, 0),
-        sleepTime = sleepTime ?? DateTime(2024, 0, 0, 0, 0);
+  });
 
   // Convert to Map for saving
   Map<String, dynamic> toMap() => {
@@ -128,10 +114,10 @@ class UserPreferences {
         'doFlux': doFlux,
         'doShallowWork': doShallowWork,
         'doSocial': doSocial,
-        'mealTimeHour': mealTime.hour,
-        'mealTimeMinute': mealTime.minute,
-        'sleepTimeHour': sleepTime.hour,
-        'sleepTimeMinute': sleepTime.minute,
+        'mealTimeHour': mealTimeHour,
+        'mealTimeMinute': mealTimeMinute,
+        'sleepTimeHour': sleepTimeHour,
+        'sleepTimeMinute': sleepTimeMinute,
       };
 
   // Create from Map
@@ -173,10 +159,6 @@ class UserPreferences {
         mealTimeMinute: map['mealTimeMinute'] ?? 0,
         sleepTimeHour: map['sleepTimeHour'] ?? 0,
         sleepTimeMinute: map['sleepTimeMinute'] ?? 0,
-        mealTime: DateTime(
-            2024, 0, 0, map['mealTimeHour'] ?? 20, map['mealTimeMinute'] ?? 0),
-        sleepTime: DateTime(
-            2024, 0, 0, map['sleepTimeHour'] ?? 0, map['sleepTimeMinute'] ?? 0),
       );
 
   static UserPreferences defaultPreferences() {
@@ -213,8 +195,6 @@ class UserPreferences {
       doFlux: true,
       doShallowWork: true,
       doSocial: true,
-      mealTime: DateTime(2024, 0, 0, 20, 0),
-      sleepTime: DateTime(2024, 0, 0, 0, 0),
       mealTimeHour: 20,
       mealTimeMinute: 0,
       sleepTimeHour: 0,

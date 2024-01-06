@@ -10,9 +10,7 @@ class LoadUserPreferencesBuilder extends UserPreferencesBuilderEvent {}
 class UpdateUserPreference<T> extends UserPreferencesBuilderEvent {
   final String key;
   final T value;
-
   UpdateUserPreference({required this.key, required this.value});
-
   @override
   List<Object> get props => [key, value ?? ''];
 }

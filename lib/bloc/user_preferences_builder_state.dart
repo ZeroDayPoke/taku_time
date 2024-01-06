@@ -17,6 +17,13 @@ class UserPreferencesBuilderLoaded extends UserPreferencesBuilderState {
   List<Object> get props => [preferencesBuilder];
 }
 
-class UserPreferencesBuilderSaved extends UserPreferencesBuilderState {}
+class UserPreferencesBuilderUpdated extends UserPreferencesBuilderState {
+  final UserPreferencesBuilder preferencesBuilder;
+
+  UserPreferencesBuilderUpdated(this.preferencesBuilder);
+
+  @override
+  List<Object> get props => [preferencesBuilder];
+}
 
 class UserPreferencesBuilderError extends UserPreferencesBuilderState {}

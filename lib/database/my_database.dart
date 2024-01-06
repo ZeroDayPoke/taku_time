@@ -37,15 +37,22 @@ class MyDatabase extends _$MyDatabase {
   Future deleteSchedule(int id) =>
       (delete(schedules)..where((tbl) => tbl.id.equals(id))).go();
 
-  Future<void> customSetActiveSchedule(int scheduleId) async {
+  Future<void> setActiveSchedule(int scheduleId) async {
     await (update(schedules)..where((tbl) => tbl.id.equals(scheduleId).not()))
         .write(const SchedulesCompanion(isActive: Value(false)));
     await (update(schedules)..where((tbl) => tbl.id.equals(scheduleId)))
         .write(const SchedulesCompanion(isActive: Value(true)));
   }
 
-  Future<Schedule?> getActiveSchedule() async {
-    return (select(schedules)..where((tbl) => tbl.isActive.equals(true)))
-        .getSingleOrNull();
+  Future<Schedule?> getActiveScheduleData() async {
+    var scheduleQuery = select(schedules)
+      ..where((tbl) => tbl.isActive.equals(true));
+    return await scheduleQuery.getSingleOrNull();
+  }
+
+  Future<List<Block>> getBlocksForSchedule(int scheduleId) async {
+    var blocksQuery = select(blocks)
+      ..where((tbl) => tbl.scheduleId.equals(scheduleId));
+    return await blocksQuery.get();
   }
 }
