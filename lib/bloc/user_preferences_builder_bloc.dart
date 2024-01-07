@@ -29,7 +29,6 @@ class UserPreferencesBuilderBloc
     try {
       final prefs = await _preferencesService.loadPreferences();
       _currentBuilder = UserPreferencesBuilder.fromUserPreferences(prefs);
-      debugPrint('Loaded preferences: ${_currentBuilder!.getAllPreferences()}');
       debugPrint('Emitting UserPreferencesBuilderLoaded State');
       emit(UserPreferencesBuilderLoaded(_currentBuilder!));
     } catch (e) {
@@ -45,9 +44,10 @@ class UserPreferencesBuilderBloc
     debugPrint(
         'Processing UpdateUserPreference Event for key: ${event.key}, value: ${event.value}');
     if (_currentBuilder != null) {
-      var updatedBuilder =
+      // Update and emit new state
+      _currentBuilder =
           _currentBuilder!.updatePreference(event.key, event.value);
-      emit(UserPreferencesBuilderUpdated(updatedBuilder));
+      emit(UserPreferencesBuilderUpdated(_currentBuilder!));
     }
   }
 

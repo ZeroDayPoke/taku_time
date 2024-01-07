@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/schedule_bloc.dart';
-import '../bloc/schedule_state.dart';
 import '../models/block.dart';
 import '../widgets/block_card.dart';
+import '../bloc/schedule_builder_bloc.dart';
+import '../bloc/schedule_builder_state.dart';
+import '../bloc/schedule_builder_event.dart';
 
 class ScheduleScreen extends StatelessWidget {
   const ScheduleScreen({Key? key}) : super(key: key);
@@ -14,17 +15,17 @@ class ScheduleScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Schedule'),
       ),
-      body: BlocBuilder<ScheduleBloc, ScheduleState>(
-        builder: (context, scheduleState) {
-          if (scheduleState is ScheduleLoadSuccess) {
-            return _buildScheduleContent(scheduleState.weeklySchedule);
-          } else if (scheduleState is ScheduleLoadInProgress) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return const Center(child: Text('Failed to load schedule'));
-          }
-        },
-      ),
+      // body: BlocBuilder<ScheduleBuilderBloc, ScheduleBuilderState>(
+      //   builder: (context, scheduleState) {
+      //     if (scheduleState is ScheduleBuildingComplete) {
+      //       return _buildScheduleContent(scheduleState.weeklySchedule);
+      //     } else if (scheduleState is ScheduleBuildingInProgress) {
+      //       return const Center(child: CircularProgressIndicator());
+      //     } else {
+      //       return const Center(child: Text('Failed to load schedule'));
+      //     }
+      //   },
+      // ),
     );
   }
 

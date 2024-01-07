@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'setting_slider.dart';
 import 'setting_switch.dart';
+import 'relax_block_card.dart';
 
 class SettingsListView extends StatelessWidget {
   const SettingsListView({Key? key}) : super(key: key);
@@ -15,6 +16,11 @@ class SettingsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: const <Widget>[
+        RelaxBlockCard(
+          activityName: 'Otaku',
+          durationKeyName: 'defaultOtakuDuration',
+          enableKeyName: 'doOtaku',
+        ),
         // Default Durations
         SettingSlider(
           title: 'Default Learning Duration',
@@ -65,13 +71,13 @@ class SettingsListView extends StatelessWidget {
           divisions: sliderDivisions,
           keyName: 'defaultOutdoorDuration',
         ),
-        SettingSlider(
-          title: 'Default Otaku Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultOtakuDuration',
-        ),
+        // SettingSlider(
+        //   title: 'Default Otaku Duration',
+        //   min: minSliderValue,
+        //   max: maxSliderValue,
+        //   divisions: sliderDivisions,
+        //   keyName: 'defaultOtakuDuration',
+        // ),
         SettingSlider(
           title: 'Default Exercise Duration',
           min: minSliderValue,
@@ -110,10 +116,10 @@ class SettingsListView extends StatelessWidget {
           title: 'Enable Meditation',
           keyName: 'doMeditation',
         ),
-        SettingSwitch(
-          title: 'Enable Otaku Time',
-          keyName: 'doOtaku',
-        ),
+        // SettingSwitch(
+        //   title: 'Enable Otaku Time',
+        //   keyName: 'doOtaku',
+        // ),
         SettingSwitch(
           title: 'Enable Exercise',
           keyName: 'doExercise',

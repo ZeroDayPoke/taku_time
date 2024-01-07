@@ -25,15 +25,15 @@ class HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.schedule),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ScheduleScreen()),
-              );
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.schedule),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => const ScheduleScreen()),
+          //     );
+          //   },
+          // ),
         ],
       ),
       body: const Center(

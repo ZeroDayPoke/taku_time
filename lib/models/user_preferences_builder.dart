@@ -120,159 +120,263 @@ class UserPreferencesBuilder {
     );
   }
 
+  UserPreferencesBuilder._internal({
+    this.defaultDeepWorkDuration = 90,
+    this.defaultLearningDuration = 90,
+    this.defaultSocialDuration = 60,
+    this.defaultFluxDuration = 20,
+    this.defaultShallowWorkDuration = 30,
+    this.defaultMeditationDuration = 15,
+    this.defaultOutdoorDuration = 15,
+    this.defaultOtakuDuration = 60,
+    this.defaultExerciseDuration = 30,
+    this.defaultMealDuration = 30,
+    this.defaultRestDuration = 480,
+    this.defaultTediumDuration = 30,
+    this.doOutdoor = true,
+    this.weeklyOutdoorBlocks = 2,
+    this.doMeditation = true,
+    this.dailyMeditationSessions = 1,
+    this.doOtaku = true,
+    this.weeklyOtakuBlocks = 10,
+    this.doExercise = true,
+    this.enableHighIntensityExercise = true,
+    this.weeklyHighIntensityExerciseBlocks = 3,
+    this.doTedium = true,
+    this.doFlux = true,
+    this.weeklyFluxBlocks = 3,
+    this.doShallowWork = true,
+    this.weeklyShallowWorkBlocks = 7,
+    this.doSocial = true,
+    this.weeklySocialBlocks = 1,
+    this.dailyLearningSessions = 2,
+    this.dailyDeepWorkSessions = 4,
+    this.isFasting = true,
+    this.startDay = 1,
+    this.mealTimeHour = 20,
+    this.mealTimeMinute = 0,
+    this.sleepTimeHour = 0,
+    this.sleepTimeMinute = 0,
+  });
+
   UserPreferencesBuilder updatePreference<T>(String key, T value) {
-    var updatedBuilder = UserPreferencesBuilder(
-      defaultDeepWorkDuration: defaultDeepWorkDuration,
-      defaultLearningDuration: defaultLearningDuration,
-      defaultSocialDuration: defaultSocialDuration,
-      defaultFluxDuration: defaultFluxDuration,
-      defaultShallowWorkDuration: defaultShallowWorkDuration,
-      defaultMeditationDuration: defaultMeditationDuration,
-      defaultOutdoorDuration: defaultOutdoorDuration,
-      defaultOtakuDuration: defaultOtakuDuration,
-      defaultExerciseDuration: defaultExerciseDuration,
-      defaultMealDuration: defaultMealDuration,
-      defaultRestDuration: defaultRestDuration,
-      defaultTediumDuration: defaultTediumDuration,
-      doOutdoor: doOutdoor,
-      weeklyOutdoorBlocks: weeklyOutdoorBlocks,
-      doMeditation: doMeditation,
-      dailyMeditationSessions: dailyMeditationSessions,
-      doOtaku: doOtaku,
-      weeklyOtakuBlocks: weeklyOtakuBlocks,
-      doExercise: doExercise,
-      enableHighIntensityExercise: enableHighIntensityExercise,
-      weeklyHighIntensityExerciseBlocks: weeklyHighIntensityExerciseBlocks,
-      doTedium: doTedium,
-      doFlux: doFlux,
-      weeklyFluxBlocks: weeklyFluxBlocks,
-      doShallowWork: doShallowWork,
-      weeklyShallowWorkBlocks: weeklyShallowWorkBlocks,
-      doSocial: doSocial,
-      weeklySocialBlocks: weeklySocialBlocks,
-      dailyLearningSessions: dailyLearningSessions,
-      dailyDeepWorkSessions: dailyDeepWorkSessions,
-      isFasting: isFasting,
-      startDay: startDay,
-      mealTimeHour: mealTimeHour,
-      mealTimeMinute: mealTimeMinute,
-      sleepTimeHour: sleepTimeHour,
-      sleepTimeMinute: sleepTimeMinute,
-    );
-
-    switch (key) {
-      case 'defaultDeepWorkDuration':
-        if (value is int) defaultDeepWorkDuration = value;
-        break;
-      case 'defaultLearningDuration':
-        if (value is int) defaultLearningDuration = value;
-        break;
-      case 'defaultSocialDuration':
-        if (value is int) defaultSocialDuration = value;
-        break;
-      case 'defaultFluxDuration':
-        if (value is int) defaultFluxDuration = value;
-        break;
-      case 'defaultShallowWorkDuration':
-        if (value is int) defaultShallowWorkDuration = value;
-        break;
-      case 'defaultMeditationDuration':
-        if (value is int) defaultMeditationDuration = value;
-        break;
-      case 'defaultOutdoorDuration':
-        if (value is int) defaultOutdoorDuration = value;
-        break;
-      case 'defaultOtakuDuration':
-        if (value is int) defaultOtakuDuration = value;
-        break;
-      case 'defaultExerciseDuration':
-        if (value is int) defaultExerciseDuration = value;
-        break;
-      case 'defaultMealDuration':
-        if (value is int) defaultMealDuration = value;
-        break;
-      case 'defaultRestDuration':
-        if (value is int) defaultRestDuration = value;
-        break;
-      case 'defaultTediumDuration':
-        if (value is int) defaultTediumDuration = value;
-        break;
-      case 'doOutdoor':
-        if (value is bool) doOutdoor = value;
-        break;
-      case 'weeklyOutdoorBlocks':
-        if (value is int) weeklyOutdoorBlocks = value;
-        break;
-      case 'doMeditation':
-        if (value is bool) doMeditation = value;
-        break;
-      case 'dailyMeditationSessions':
-        if (value is int) dailyMeditationSessions = value;
-        break;
-      case 'doOtaku':
-        if (value is bool) doOtaku = value;
-        break;
-      case 'weeklyOtakuBlocks':
-        if (value is int) weeklyOtakuBlocks = value;
-        break;
-      case 'doExercise':
-        if (value is bool) doExercise = value;
-        break;
-      case 'enableHighIntensityExercise':
-        if (value is bool) enableHighIntensityExercise = value;
-        break;
-      case 'weeklyHighIntensityExerciseBlocks':
-        if (value is int) weeklyHighIntensityExerciseBlocks = value;
-        break;
-      case 'doTedium':
-        if (value is bool) doTedium = value;
-        break;
-      case 'doFlux':
-        if (value is bool) doFlux = value;
-        break;
-      case 'weeklyFluxBlocks':
-        if (value is int) weeklyFluxBlocks = value;
-        break;
-      case 'doShallowWork':
-        if (value is bool) doShallowWork = value;
-        break;
-      case 'weeklyShallowWorkBlocks':
-        if (value is int) weeklyShallowWorkBlocks = value;
-        break;
-      case 'doSocial':
-        if (value is bool) doSocial = value;
-        break;
-      case 'weeklySocialBlocks':
-        if (value is int) weeklySocialBlocks = value;
-        break;
-      case 'dailyLearningSessions':
-        if (value is int) dailyLearningSessions = value;
-        break;
-      case 'dailyDeepWorkSessions':
-        if (value is int) dailyDeepWorkSessions = value;
-        break;
-      case 'isFasting':
-        if (value is bool) isFasting = value;
-        break;
-      case 'startDay':
-        if (value is int) startDay = value;
-        break;
-      case 'mealTimeHour':
-        if (value is int) mealTimeHour = value;
-        break;
-      case 'mealTimeMinute':
-        if (value is int) mealTimeMinute = value;
-        break;
-      case 'sleepTimeHour':
-        if (value is int) sleepTimeHour = value;
-        break;
-      case 'sleepTimeMinute':
-        if (value is int) sleepTimeMinute = value;
-        break;
-    }
-
-    return updatedBuilder;
+    return UserPreferencesBuilder._internal(
+        defaultDeepWorkDuration: key == 'defaultDeepWorkDuration' && value is int
+            ? value
+            : defaultDeepWorkDuration,
+        defaultLearningDuration: key == 'defaultLearningDuration' && value is int
+            ? value
+            : defaultLearningDuration,
+        defaultSocialDuration: key == 'defaultSocialDuration' && value is int
+            ? value
+            : defaultSocialDuration,
+        defaultFluxDuration: key == 'defaultFluxDuration' && value is int
+            ? value
+            : defaultFluxDuration,
+        defaultShallowWorkDuration: key == 'defaultShallowWorkDuration' && value is int
+            ? value
+            : defaultShallowWorkDuration,
+        defaultMeditationDuration: key == 'defaultMeditationDuration' && value is int
+            ? value
+            : defaultMeditationDuration,
+        defaultOutdoorDuration: key == 'defaultOutdoorDuration' && value is int
+            ? value
+            : defaultOutdoorDuration,
+        defaultOtakuDuration: key == 'defaultOtakuDuration' && value is int
+            ? value
+            : defaultOtakuDuration,
+        defaultExerciseDuration: key == 'defaultExerciseDuration' && value is int
+            ? value
+            : defaultExerciseDuration,
+        defaultMealDuration: key == 'defaultMealDuration' && value is int
+            ? value
+            : defaultMealDuration,
+        defaultRestDuration: key == 'defaultRestDuration' && value is int
+            ? value
+            : defaultRestDuration,
+        defaultTediumDuration: key == 'defaultTediumDuration' && value is int
+            ? value
+            : defaultTediumDuration,
+        doOutdoor: key == 'doOutdoor' && value is bool ? value : doOutdoor,
+        weeklyOutdoorBlocks:
+            key == 'weeklyOutdoorBlocks' && value is int ? value : weeklyOutdoorBlocks,
+        doMeditation: key == 'doMeditation' && value is bool ? value : doMeditation,
+        dailyMeditationSessions: key == 'dailyMeditationSessions' && value is int ? value : dailyMeditationSessions,
+        doOtaku: key == 'doOtaku' && value is bool ? value : doOtaku,
+        weeklyOtakuBlocks: key == 'weeklyOtakuBlocks' && value is int ? value : weeklyOtakuBlocks,
+        doExercise: key == 'doExercise' && value is bool ? value : doExercise,
+        enableHighIntensityExercise: key == 'enableHighIntensityExercise' && value is bool ? value : enableHighIntensityExercise,
+        weeklyHighIntensityExerciseBlocks: key == 'weeklyHighIntensityExerciseBlocks' && value is int ? value : weeklyHighIntensityExerciseBlocks,
+        doTedium: key == 'doTedium' && value is bool ? value : doTedium,
+        doFlux: key == 'doFlux' && value is bool ? value : doFlux,
+        weeklyFluxBlocks: key == 'weeklyFluxBlocks' && value is int ? value : weeklyFluxBlocks,
+        doShallowWork: key == 'doShallowWork' && value is bool ? value : doShallowWork,
+        weeklyShallowWorkBlocks: key == 'weeklyShallowWorkBlocks' && value is int ? value : weeklyShallowWorkBlocks,
+        doSocial: key == 'doSocial' && value is bool ? value : doSocial,
+        weeklySocialBlocks: key == 'weeklySocialBlocks' && value is int ? value : weeklySocialBlocks,
+        dailyLearningSessions: key == 'dailyLearningSessions' && value is int ? value : dailyLearningSessions,
+        dailyDeepWorkSessions: key == 'dailyDeepWorkSessions' && value is int ? value : dailyDeepWorkSessions,
+        isFasting: key == 'isFasting' && value is bool ? value : isFasting,
+        startDay: key == 'startDay' && value is int ? value : startDay,
+        mealTimeHour: key == 'mealTimeHour' && value is int ? value : mealTimeHour,
+        mealTimeMinute: key == 'mealTimeMinute' && value is int ? value : mealTimeMinute,
+        sleepTimeHour: key == 'sleepTimeHour' && value is int ? value : sleepTimeHour,
+        sleepTimeMinute: key == 'sleepTimeMinute' && value is int ? value : sleepTimeMinute);
   }
+
+  // UserPreferencesBuilder updatePreference<T>(String key, T value) {
+  //   var updatedBuilder = UserPreferencesBuilder(
+  //     defaultDeepWorkDuration: defaultDeepWorkDuration,
+  //     defaultLearningDuration: defaultLearningDuration,
+  //     defaultSocialDuration: defaultSocialDuration,
+  //     defaultFluxDuration: defaultFluxDuration,
+  //     defaultShallowWorkDuration: defaultShallowWorkDuration,
+  //     defaultMeditationDuration: defaultMeditationDuration,
+  //     defaultOutdoorDuration: defaultOutdoorDuration,
+  //     defaultOtakuDuration: defaultOtakuDuration,
+  //     defaultExerciseDuration: defaultExerciseDuration,
+  //     defaultMealDuration: defaultMealDuration,
+  //     defaultRestDuration: defaultRestDuration,
+  //     defaultTediumDuration: defaultTediumDuration,
+  //     doOutdoor: doOutdoor,
+  //     weeklyOutdoorBlocks: weeklyOutdoorBlocks,
+  //     doMeditation: doMeditation,
+  //     dailyMeditationSessions: dailyMeditationSessions,
+  //     doOtaku: doOtaku,
+  //     weeklyOtakuBlocks: weeklyOtakuBlocks,
+  //     doExercise: doExercise,
+  //     enableHighIntensityExercise: enableHighIntensityExercise,
+  //     weeklyHighIntensityExerciseBlocks: weeklyHighIntensityExerciseBlocks,
+  //     doTedium: doTedium,
+  //     doFlux: doFlux,
+  //     weeklyFluxBlocks: weeklyFluxBlocks,
+  //     doShallowWork: doShallowWork,
+  //     weeklyShallowWorkBlocks: weeklyShallowWorkBlocks,
+  //     doSocial: doSocial,
+  //     weeklySocialBlocks: weeklySocialBlocks,
+  //     dailyLearningSessions: dailyLearningSessions,
+  //     dailyDeepWorkSessions: dailyDeepWorkSessions,
+  //     isFasting: isFasting,
+  //     startDay: startDay,
+  //     mealTimeHour: mealTimeHour,
+  //     mealTimeMinute: mealTimeMinute,
+  //     sleepTimeHour: sleepTimeHour,
+  //     sleepTimeMinute: sleepTimeMinute,
+  //   );
+
+  //   switch (key) {
+  //     case 'defaultDeepWorkDuration':
+  //       if (value is int) defaultDeepWorkDuration = value;
+  //       break;
+  //     case 'defaultLearningDuration':
+  //       if (value is int) defaultLearningDuration = value;
+  //       break;
+  //     case 'defaultSocialDuration':
+  //       if (value is int) defaultSocialDuration = value;
+  //       break;
+  //     case 'defaultFluxDuration':
+  //       if (value is int) defaultFluxDuration = value;
+  //       break;
+  //     case 'defaultShallowWorkDuration':
+  //       if (value is int) defaultShallowWorkDuration = value;
+  //       break;
+  //     case 'defaultMeditationDuration':
+  //       if (value is int) defaultMeditationDuration = value;
+  //       break;
+  //     case 'defaultOutdoorDuration':
+  //       if (value is int) defaultOutdoorDuration = value;
+  //       break;
+  //     case 'defaultOtakuDuration':
+  //       if (value is int) defaultOtakuDuration = value;
+  //       break;
+  //     case 'defaultExerciseDuration':
+  //       if (value is int) defaultExerciseDuration = value;
+  //       break;
+  //     case 'defaultMealDuration':
+  //       if (value is int) defaultMealDuration = value;
+  //       break;
+  //     case 'defaultRestDuration':
+  //       if (value is int) defaultRestDuration = value;
+  //       break;
+  //     case 'defaultTediumDuration':
+  //       if (value is int) defaultTediumDuration = value;
+  //       break;
+  //     case 'doOutdoor':
+  //       if (value is bool) doOutdoor = value;
+  //       break;
+  //     case 'weeklyOutdoorBlocks':
+  //       if (value is int) weeklyOutdoorBlocks = value;
+  //       break;
+  //     case 'doMeditation':
+  //       if (value is bool) doMeditation = value;
+  //       break;
+  //     case 'dailyMeditationSessions':
+  //       if (value is int) dailyMeditationSessions = value;
+  //       break;
+  //     case 'doOtaku':
+  //       if (value is bool) doOtaku = value;
+  //       break;
+  //     case 'weeklyOtakuBlocks':
+  //       if (value is int) weeklyOtakuBlocks = value;
+  //       break;
+  //     case 'doExercise':
+  //       if (value is bool) doExercise = value;
+  //       break;
+  //     case 'enableHighIntensityExercise':
+  //       if (value is bool) enableHighIntensityExercise = value;
+  //       break;
+  //     case 'weeklyHighIntensityExerciseBlocks':
+  //       if (value is int) weeklyHighIntensityExerciseBlocks = value;
+  //       break;
+  //     case 'doTedium':
+  //       if (value is bool) doTedium = value;
+  //       break;
+  //     case 'doFlux':
+  //       if (value is bool) doFlux = value;
+  //       break;
+  //     case 'weeklyFluxBlocks':
+  //       if (value is int) weeklyFluxBlocks = value;
+  //       break;
+  //     case 'doShallowWork':
+  //       if (value is bool) doShallowWork = value;
+  //       break;
+  //     case 'weeklyShallowWorkBlocks':
+  //       if (value is int) weeklyShallowWorkBlocks = value;
+  //       break;
+  //     case 'doSocial':
+  //       if (value is bool) doSocial = value;
+  //       break;
+  //     case 'weeklySocialBlocks':
+  //       if (value is int) weeklySocialBlocks = value;
+  //       break;
+  //     case 'dailyLearningSessions':
+  //       if (value is int) dailyLearningSessions = value;
+  //       break;
+  //     case 'dailyDeepWorkSessions':
+  //       if (value is int) dailyDeepWorkSessions = value;
+  //       break;
+  //     case 'isFasting':
+  //       if (value is bool) isFasting = value;
+  //       break;
+  //     case 'startDay':
+  //       if (value is int) startDay = value;
+  //       break;
+  //     case 'mealTimeHour':
+  //       if (value is int) mealTimeHour = value;
+  //       break;
+  //     case 'mealTimeMinute':
+  //       if (value is int) mealTimeMinute = value;
+  //       break;
+  //     case 'sleepTimeHour':
+  //       if (value is int) sleepTimeHour = value;
+  //       break;
+  //     case 'sleepTimeMinute':
+  //       if (value is int) sleepTimeMinute = value;
+  //       break;
+  //   }
+
+  //   return updatedBuilder;
+  // }
 
   UserPreferences build() {
     return UserPreferences(

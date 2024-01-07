@@ -1,52 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'bloc/user_preferences_builder_bloc.dart';
 import 'bloc/user_preferences_builder_event.dart';
-import 'bloc/schedule_bloc.dart';
+import 'bloc/schedule_builder_bloc.dart';
 import 'bloc/block_bloc.dart';
 
 import 'screens/home_screen.dart';
-import 'database/database_helper.dart';
 
 import 'services/schedule_service.dart';
 import 'services/preferences_service.dart';
+
+import 'repositories/schedule_repository.dart';
+import 'repositories/block_repository.dart';
 
 import 'models/user_preferences_builder.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(TakuTime());
+  runApp(const TakuTime());
 }
 
 class TakuTime extends StatelessWidget {
-  TakuTime({Key? key}) : super(key: key);
-
-  final DatabaseHelper databaseHelper = DatabaseHelper.instance;
-  final PreferencesService preferencesService = PreferencesService();
+  const TakuTime({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    UserPreferencesBuilder userPreferencesBuilder =
-        UserPreferencesBuilder.defaultBuilder();
-    return MultiBlocProvider(
+    return MultiProvider(
       providers: [
-        BlocProvider(
-          create: (context) => BlockBloc(databaseHelper),
+        // Provider<ScheduleRepository>(
+        //   create: (_) => ScheduleRepository(),
+        // ),
+        // Provider<BlockRepository>(
+        //   create: (_) => BlockRepository(),
+        // ),
+        // Provider<ScheduleService>(
+        //   create: (_) => ScheduleService(
+        //     Provider.of<ScheduleRepository>(_, listen: false),
+        //   ),
+        // ),
+        Provider<PreferencesService>(
+          create: (_) => PreferencesService(),
         ),
         BlocProvider(
-          create: (context) =>
-              UserPreferencesBuilderBloc(preferencesService: preferencesService)
-                ..add(LoadUserPreferencesBuilder()),
-        ),
-        BlocProvider(
-          create: (context) => ScheduleBloc(
-            blockBloc: BlocProvider.of<BlockBloc>(context),
-            userPreferencesBuilderBloc:
-                BlocProvider.of<UserPreferencesBuilderBloc>(context),
-            scheduleService: ScheduleService(userPreferencesBuilder),
-          ),
-        ),
+            create: (context) => UserPreferencesBuilderBloc(
+                preferencesService:
+                    Provider.of<PreferencesService>(context, listen: false))),
+        // BlocProvider(
+        //   create: (context) => ScheduleBuilderBloc(
+        //     scheduleService:
+        //         Provider.of<ScheduleService>(context, listen: false),
+        //   ),
+        // ),
       ],
       child: MaterialApp(
         title: 'TakuTime',
