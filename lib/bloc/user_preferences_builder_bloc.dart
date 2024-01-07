@@ -14,10 +14,10 @@ class UserPreferencesBuilderBloc
       : _preferencesService = preferencesService ?? PreferencesService(),
         super(UserPreferencesBuilderInitial()) {
     on<LoadUserPreferencesBuilder>(_onLoadUserPreferencesBuilder);
+    on<ReloadUserPreferences>(_onReloadUserPreferences);
     on<UpdateUserPreference>(_onUpdateUserPreference);
     on<ResetUserPreferences>(_onResetUserPreferences);
     on<SaveUserPreferences>(_onSaveUserPreferences);
-
     add(LoadUserPreferencesBuilder());
   }
 
@@ -25,14 +25,24 @@ class UserPreferencesBuilderBloc
     LoadUserPreferencesBuilder event,
     Emitter<UserPreferencesBuilderState> emit,
   ) async {
-    debugPrint('Processing LoadUserPreferencesBuilder Event');
+    await _loadAndEmitPreferences(emit);
+  }
+
+  void _onReloadUserPreferences(
+    ReloadUserPreferences event,
+    Emitter<UserPreferencesBuilderState> emit,
+  ) async {
+    await _loadAndEmitPreferences(emit);
+  }
+
+  Future<void> _loadAndEmitPreferences(
+      Emitter<UserPreferencesBuilderState> emit) async {
     try {
       final prefs = await _preferencesService.loadPreferences();
       _currentBuilder = UserPreferencesBuilder.fromUserPreferences(prefs);
-      debugPrint('Emitting UserPreferencesBuilderLoaded State');
       emit(UserPreferencesBuilderLoaded(_currentBuilder!));
     } catch (e) {
-      debugPrint('Error in LoadUserPreferencesBuilder: $e');
+      debugPrint('Error loading preferences: $e');
       emit(UserPreferencesBuilderError());
     }
   }
@@ -44,7 +54,6 @@ class UserPreferencesBuilderBloc
     debugPrint(
         'Processing UpdateUserPreference Event for key: ${event.key}, value: ${event.value}');
     if (_currentBuilder != null) {
-      // Update and emit new state
       _currentBuilder =
           _currentBuilder!.updatePreference(event.key, event.value);
       emit(UserPreferencesBuilderUpdated(_currentBuilder!));
@@ -64,8 +73,11 @@ class UserPreferencesBuilderBloc
   void _onSaveUserPreferences(
     SaveUserPreferences event,
     Emitter<UserPreferencesBuilderState> emit,
-  ) {
-    _savePreferences();
+  ) async {
+    if (_currentBuilder != null) {
+      await _savePreferences();
+      await _loadAndEmitPreferences(emit);
+    }
   }
 
   Future<void> _savePreferences() async {

@@ -7,6 +7,8 @@ abstract class UserPreferencesBuilderEvent extends Equatable {
 
 class LoadUserPreferencesBuilder extends UserPreferencesBuilderEvent {}
 
+class ReloadUserPreferences extends UserPreferencesBuilderEvent {}
+
 class UpdateUserPreference<T> extends UserPreferencesBuilderEvent {
   final String key;
   final T value;
