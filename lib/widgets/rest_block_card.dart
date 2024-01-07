@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'setting_slider.dart';
+import 'settings_number_picker.dart';
 import '../bloc/user_preferences_builder_bloc.dart';
 import '../bloc/user_preferences_builder_state.dart';
 import '../models/user_preferences_builder.dart';
@@ -28,38 +29,34 @@ class RestBlockCard extends StatelessWidget {
           final int totalSleepTime = restDuration * 7;
 
           return Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: const Text('Rest Settings'),
-                  subtitle: Text('Total sleep time: $totalSleepTime mins'),
-                ),
-                SettingSlider(
-                  title: 'Default Rest Duration',
-                  min: 0,
-                  max: 800,
-                  divisions: 60,
-                  keyName: 'defaultRestDuration',
-                  preferencesBuilder: preferencesBuilder,
-                ),
-                SettingSlider(
-                  title: 'Sleep Time Hour',
-                  min: 0,
-                  max: 23,
-                  divisions: 23,
-                  keyName: 'sleepTimeHour',
-                  preferencesBuilder: preferencesBuilder,
-                ),
-                SettingSlider(
-                  title: 'Sleep Time Minute',
-                  min: 0,
-                  max: 59,
-                  divisions: 59,
-                  keyName: 'sleepTimeMinute',
-                  preferencesBuilder: preferencesBuilder,
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: const Text('Rest Settings'),
+                    subtitle: Text('Total sleep time: $totalSleepTime mins'),
+                  ),
+                  SettingSlider(
+                    title: 'Default Rest Duration',
+                    min: 0,
+                    max: 800,
+                    divisions: 60,
+                    keyName: 'defaultRestDuration',
+                    preferencesBuilder: preferencesBuilder,
+                  ),
+                  SettingNumberPicker(
+                    title: 'Sleep Time Hour',
+                    keyName: 'sleepTimeHour',
+                    preferencesBuilder: preferencesBuilder,
+                  ),
+                  SettingNumberPicker(
+                    title: 'Sleep Time Minute',
+                    keyName: 'sleepTimeMinute',
+                    preferencesBuilder: preferencesBuilder,
+                  ),
+                ],
+              ),
             ),
           );
         } else {

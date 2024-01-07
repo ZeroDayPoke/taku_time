@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'setting_slider.dart';
 import 'setting_switch.dart';
+import 'settings_number_picker.dart';
 import '../bloc/user_preferences_builder_bloc.dart';
 import '../bloc/user_preferences_builder_state.dart';
 import '../models/user_preferences_builder.dart';
@@ -53,19 +54,13 @@ class MealBlockCard extends StatelessWidget {
                     keyName: 'defaultMealDuration',
                     preferencesBuilder: preferencesBuilder,
                   ),
-                  SettingSlider(
+                  SettingNumberPicker(
                     title: 'Meal Time Hour',
-                    min: 0,
-                    max: 23,
-                    divisions: 23,
                     keyName: 'mealTimeHour',
                     preferencesBuilder: preferencesBuilder,
                   ),
-                  SettingSlider(
+                  SettingNumberPicker(
                     title: 'Meal Time Minute',
-                    min: 0,
-                    max: 59,
-                    divisions: 59,
                     keyName: 'mealTimeMinute',
                     preferencesBuilder: preferencesBuilder,
                   ),

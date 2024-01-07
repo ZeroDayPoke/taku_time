@@ -73,9 +73,9 @@ class UserPreferencesBuilder {
     this.isFasting = true,
     this.startDay = 1,
     this.mealTimeHour = 20,
-    this.mealTimeMinute = 0,
-    this.sleepTimeHour = 0,
-    this.sleepTimeMinute = 0,
+    this.mealTimeMinute = 10,
+    this.sleepTimeHour = 10,
+    this.sleepTimeMinute = 10,
   });
 
   factory UserPreferencesBuilder.fromUserPreferences(UserPreferences prefs) {
@@ -154,9 +154,9 @@ class UserPreferencesBuilder {
     this.isFasting = true,
     this.startDay = 1,
     this.mealTimeHour = 20,
-    this.mealTimeMinute = 0,
-    this.sleepTimeHour = 0,
-    this.sleepTimeMinute = 0,
+    this.mealTimeMinute = 1,
+    this.sleepTimeHour = 10,
+    this.sleepTimeMinute = 10,
   });
 
   UserPreferencesBuilder updatePreference<T>(String key, T value) {
