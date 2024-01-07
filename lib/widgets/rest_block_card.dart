@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'setting_slider.dart';
-import 'setting_switch.dart';
 import '../bloc/user_preferences_builder_bloc.dart';
 import '../bloc/user_preferences_builder_state.dart';
 import '../models/user_preferences_builder.dart';
 
-class RelaxBlockCard extends StatelessWidget {
-  final String activityName;
-  final String durationKeyName;
-  final String enableKeyName;
-  final String weeklySessionsKeyName;
-
-  const RelaxBlockCard({
-    Key? key,
-    required this.activityName,
-    required this.durationKeyName,
-    required this.enableKeyName,
-    required this.weeklySessionsKeyName,
-  }) : super(key: key);
+class RestBlockCard extends StatelessWidget {
+  const RestBlockCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,42 +23,40 @@ class RelaxBlockCard extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          final bool isEnabled =
-              preferencesBuilder.getValueForKey(enableKeyName) as bool;
-          final int duration =
-              preferencesBuilder.getValueForKey(durationKeyName) as int;
-          final int sessions =
-              preferencesBuilder.getValueForKey(weeklySessionsKeyName) as int;
-          final int totalTime = isEnabled ? duration * sessions : 0;
+          final int restDuration =
+              preferencesBuilder.getValueForKey('defaultRestDuration') as int;
+          final int totalSleepTime = restDuration * 7;
 
           return Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  title: Text('$activityName Settings'),
-                  subtitle:
-                      isEnabled ? Text('Total time: $totalTime mins') : null,
+                  title: const Text('Rest Settings'),
+                  subtitle: Text('Total sleep time: $totalSleepTime mins'),
                 ),
                 SettingSlider(
-                  title: '$activityName Duration',
+                  title: 'Default Rest Duration',
                   min: 0,
-                  max: 120,
-                  divisions: 12,
-                  keyName: durationKeyName,
+                  max: 800,
+                  divisions: 60,
+                  keyName: 'defaultRestDuration',
                   preferencesBuilder: preferencesBuilder,
                 ),
                 SettingSlider(
-                  title: 'Weekly $activityName Sessions',
+                  title: 'Sleep Time Hour',
                   min: 0,
-                  max: 20,
-                  divisions: 7,
-                  keyName: weeklySessionsKeyName,
+                  max: 23,
+                  divisions: 23,
+                  keyName: 'sleepTimeHour',
                   preferencesBuilder: preferencesBuilder,
                 ),
-                SettingSwitch(
-                  title: 'Enable $activityName',
-                  keyName: enableKeyName,
+                SettingSlider(
+                  title: 'Sleep Time Minute',
+                  min: 0,
+                  max: 59,
+                  divisions: 59,
+                  keyName: 'sleepTimeMinute',
                   preferencesBuilder: preferencesBuilder,
                 ),
               ],

@@ -1,8 +1,10 @@
-// settings_list_view.dart
 import 'package:flutter/material.dart';
-import 'setting_slider.dart';
-import 'setting_switch.dart';
+import 'exercise_block_card.dart';
+import 'rest_block_card.dart';
+import 'tedium_block_card.dart';
+import 'meal_block_card.dart';
 import 'relax_block_card.dart';
+import 'stress_block_card.dart';
 
 class SettingsListView extends StatelessWidget {
   const SettingsListView({Key? key}) : super(key: key);
@@ -14,245 +16,92 @@ class SettingsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: const <Widget>[
-        RelaxBlockCard(
-          activityName: 'Otaku',
-          durationKeyName: 'defaultOtakuDuration',
-          enableKeyName: 'doOtaku',
-        ),
-        // Default Durations
-        SettingSlider(
-          title: 'Default Learning Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultLearningDuration',
-        ),
-        SettingSlider(
-          title: 'Default Deep Work Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultDeepWorkDuration',
-        ),
-        SettingSlider(
-          title: 'Default Social Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultSocialDuration',
-        ),
-        SettingSlider(
-          title: 'Default Flux Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultFluxDuration',
-        ),
-        SettingSlider(
-          title: 'Default Shallow Work Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultShallowWorkDuration',
-        ),
-        SettingSlider(
-          title: 'Default Meditation Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultMeditationDuration',
-        ),
-        SettingSlider(
-          title: 'Default Outdoor Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultOutdoorDuration',
-        ),
-        // SettingSlider(
-        //   title: 'Default Otaku Duration',
-        //   min: minSliderValue,
-        //   max: maxSliderValue,
-        //   divisions: sliderDivisions,
-        //   keyName: 'defaultOtakuDuration',
-        // ),
-        SettingSlider(
-          title: 'Default Exercise Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultExerciseDuration',
-        ),
-        SettingSlider(
-          title: 'Default Meal Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultMealDuration',
-        ),
-        SettingSlider(
-          title: 'Default Tedium Duration',
-          min: minSliderValue,
-          max: maxSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'defaultTediumDuration',
-        ),
-        SettingSlider(
-          title: 'Default Rest Duration',
-          min: minSliderValue,
-          max: 800,
-          divisions: 60,
-          keyName: 'defaultRestDuration',
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = constraints.maxWidth < 600 ? 1 : 3;
 
-        // Include Activities
-        SettingSwitch(
-          title: 'Enable Outdoor',
-          keyName: 'doOutdoor',
-        ),
-        SettingSwitch(
-          title: 'Enable Meditation',
-          keyName: 'doMeditation',
-        ),
-        // SettingSwitch(
-        //   title: 'Enable Otaku Time',
-        //   keyName: 'doOtaku',
-        // ),
-        SettingSwitch(
-          title: 'Enable Exercise',
-          keyName: 'doExercise',
-        ),
-        SettingSwitch(
-          title: 'Enable High Intensity Exercise',
-          keyName: 'enableHighIntensityExercise',
-        ),
-        SettingSwitch(
-          title: 'Enable Tedium',
-          keyName: 'doTedium',
-        ),
-        SettingSwitch(
-          title: 'Enable Flux',
-          keyName: 'doFlux',
-        ),
-        SettingSwitch(
-          title: 'Enable Shallow Work',
-          keyName: 'doShallowWork',
-        ),
-        SettingSwitch(
-          title: 'Enable Social Time',
-          keyName: 'doSocial',
-        ),
+        return ListView(
+          children: [
+            _buildSectionTitle('Relax Blocks'),
+            _buildCardGrid([
+              const RelaxBlockCard(
+                activityName: 'Otaku',
+                durationKeyName: 'defaultOtakuDuration',
+                weeklySessionsKeyName: 'weeklyOtakuBlocks',
+                enableKeyName: 'doOtaku',
+              ),
+              const RelaxBlockCard(
+                activityName: 'Meditation',
+                durationKeyName: 'defaultMeditationDuration',
+                enableKeyName: 'doMeditation',
+                weeklySessionsKeyName: 'dailyMeditationSessions',
+              ),
+              const RelaxBlockCard(
+                activityName: 'Outdoor',
+                durationKeyName: 'defaultOutdoorDuration',
+                enableKeyName: 'doOutdoor',
+                weeklySessionsKeyName: 'weeklyOutdoorBlocks',
+              ),
+              const RelaxBlockCard(
+                activityName: 'ShallowWork',
+                durationKeyName: 'defaultShallowWorkDuration',
+                enableKeyName: 'doShallowWork',
+                weeklySessionsKeyName: 'weeklyShallowWorkBlocks',
+              ),
+              const RelaxBlockCard(
+                activityName: 'Social',
+                durationKeyName: 'defaultSocialDuration',
+                enableKeyName: 'doSocial',
+                weeklySessionsKeyName: 'weeklySocialBlocks',
+              ),
+              const RelaxBlockCard(
+                activityName: 'Flux',
+                durationKeyName: 'defaultFluxDuration',
+                enableKeyName: 'doFlux',
+                weeklySessionsKeyName: 'weeklyFluxBlocks',
+              ),
+            ], crossAxisCount),
+            _buildSectionTitle('Stress Blocks'),
+            _buildCardGrid([
+              const StressBlockCard(
+                activityName: 'Deep Work',
+                durationKeyName: 'defaultDeepWorkDuration',
+                sessionKeyName: 'dailyDeepWorkSessions',
+              ),
+              const StressBlockCard(
+                activityName: 'Learning',
+                durationKeyName: 'defaultLearningDuration',
+                sessionKeyName: 'dailyLearningSessions',
+              ),
+            ], crossAxisCount),
+            _buildSectionTitle('Inevitable Blocks'),
+            _buildCardGrid([
+              const TediumBlockCard(),
+              const ExerciseBlockCard(),
+              const MealBlockCard(),
+              const RestBlockCard(),
+            ], crossAxisCount),
+          ],
+        );
+      },
+    );
+  }
 
-        // Weekly Blocks
-        SettingSlider(
-          title: 'Weekly Social Blocks',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'weeklySocialBlocks',
-        ),
-        SettingSlider(
-          title: 'Weekly Flux Blocks',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'weeklyFluxBlocks',
-        ),
-        SettingSlider(
-          title: 'Weekly Otaku Blocks',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'weeklyOtakuBlocks',
-        ),
-        SettingSlider(
-          title: 'Weekly Shallow Work Blocks',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'weeklyShallowWorkBlocks',
-        ),
-        SettingSlider(
-          title: 'Weekly Outdoor Blocks',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'weeklyOutdoorBlocks',
-        ),
-        SettingSlider(
-          title: 'Weekly High Intensity Exercise Blocks',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'weeklyHighIntensityExerciseBlocks',
-        ),
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    );
+  }
 
-        // Daily Sessions
-        SettingSlider(
-          title: 'Daily Meditation Sessions',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'dailyMeditationSessions',
-        ),
-        SettingSlider(
-          title: 'Daily Learning Sessions',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'dailyLearningSessions',
-        ),
-        SettingSlider(
-          title: 'Daily Deep Work Sessions',
-          min: minSliderValue,
-          max: maxNumberSliderValue,
-          divisions: sliderDivisions,
-          keyName: 'dailyDeepWorkSessions',
-        ),
-
-        // General Settings
-        SettingSlider(
-          title: 'Start Day',
-          min: 0,
-          max: 6,
-          divisions: 6,
-          keyName: 'startDay',
-        ),
-        SettingSlider(
-          title: 'Meal Time Hour',
-          min: 0,
-          max: 23,
-          divisions: 23,
-          keyName: 'mealTimeHour',
-        ),
-        SettingSlider(
-          title: 'Meal Time Minute',
-          min: 0,
-          max: 59,
-          divisions: 59,
-          keyName: 'mealTimeMinute',
-        ),
-        SettingSlider(
-          title: 'Sleep Time Hour',
-          min: 0,
-          max: 23,
-          divisions: 23,
-          keyName: 'sleepTimeHour',
-        ),
-        SettingSlider(
-          title: 'Sleep Time Minute',
-          min: 0,
-          max: 59,
-          divisions: 59,
-          keyName: 'sleepTimeMinute',
-        ),
-        SettingSwitch(
-          title: 'Is Fasting',
-          keyName: 'isFasting',
-        ),
-      ],
+  Widget _buildCardGrid(List<Widget> cards, int crossAxisCount) {
+    return GridView.count(
+      crossAxisCount: crossAxisCount,
+      childAspectRatio: 3 / 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: cards,
     );
   }
 }

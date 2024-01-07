@@ -6,19 +6,8 @@ import '../bloc/user_preferences_builder_bloc.dart';
 import '../bloc/user_preferences_builder_state.dart';
 import '../models/user_preferences_builder.dart';
 
-class RelaxBlockCard extends StatelessWidget {
-  final String activityName;
-  final String durationKeyName;
-  final String enableKeyName;
-  final String weeklySessionsKeyName;
-
-  const RelaxBlockCard({
-    Key? key,
-    required this.activityName,
-    required this.durationKeyName,
-    required this.enableKeyName,
-    required this.weeklySessionsKeyName,
-  }) : super(key: key);
+class TediumBlockCard extends StatelessWidget {
+  const TediumBlockCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,41 +25,31 @@ class RelaxBlockCard extends StatelessWidget {
           }
 
           final bool isEnabled =
-              preferencesBuilder.getValueForKey(enableKeyName) as bool;
+              preferencesBuilder.getValueForKey('doTedium') as bool;
           final int duration =
-              preferencesBuilder.getValueForKey(durationKeyName) as int;
-          final int sessions =
-              preferencesBuilder.getValueForKey(weeklySessionsKeyName) as int;
-          final int totalTime = isEnabled ? duration * sessions : 0;
+              preferencesBuilder.getValueForKey('defaultTediumDuration') as int;
+          final int totalTime = isEnabled ? duration * 7 : 0;
 
           return Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  title: Text('$activityName Settings'),
+                  title: const Text('Tedium Settings'),
                   subtitle:
                       isEnabled ? Text('Total time: $totalTime mins') : null,
                 ),
-                SettingSlider(
-                  title: '$activityName Duration',
-                  min: 0,
-                  max: 120,
-                  divisions: 12,
-                  keyName: durationKeyName,
-                  preferencesBuilder: preferencesBuilder,
-                ),
-                SettingSlider(
-                  title: 'Weekly $activityName Sessions',
-                  min: 0,
-                  max: 20,
-                  divisions: 7,
-                  keyName: weeklySessionsKeyName,
-                  preferencesBuilder: preferencesBuilder,
-                ),
                 SettingSwitch(
-                  title: 'Enable $activityName',
-                  keyName: enableKeyName,
+                  title: 'Enable Tedium',
+                  keyName: 'doTedium',
+                  preferencesBuilder: preferencesBuilder,
+                ),
+                SettingSlider(
+                  title: 'Default Tedium Duration',
+                  min: 30,
+                  max: 120,
+                  divisions: 10,
+                  keyName: 'defaultTediumDuration',
                   preferencesBuilder: preferencesBuilder,
                 ),
               ],

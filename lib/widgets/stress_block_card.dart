@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'setting_slider.dart';
-import 'setting_switch.dart';
 import '../bloc/user_preferences_builder_bloc.dart';
 import '../bloc/user_preferences_builder_state.dart';
 import '../models/user_preferences_builder.dart';
 
-class RelaxBlockCard extends StatelessWidget {
+class StressBlockCard extends StatelessWidget {
   final String activityName;
   final String durationKeyName;
-  final String enableKeyName;
-  final String weeklySessionsKeyName;
+  final String sessionKeyName;
 
-  const RelaxBlockCard({
+  const StressBlockCard({
     Key? key,
     required this.activityName,
     required this.durationKeyName,
-    required this.enableKeyName,
-    required this.weeklySessionsKeyName,
+    required this.sessionKeyName,
   }) : super(key: key);
 
   @override
@@ -35,25 +32,22 @@ class RelaxBlockCard extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          final bool isEnabled =
-              preferencesBuilder.getValueForKey(enableKeyName) as bool;
           final int duration =
               preferencesBuilder.getValueForKey(durationKeyName) as int;
           final int sessions =
-              preferencesBuilder.getValueForKey(weeklySessionsKeyName) as int;
-          final int totalTime = isEnabled ? duration * sessions : 0;
+              preferencesBuilder.getValueForKey(sessionKeyName) as int;
+          final int totalTime = duration * sessions * 7;
 
           return Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  title: Text('$activityName Settings'),
-                  subtitle:
-                      isEnabled ? Text('Total time: $totalTime mins') : null,
+                  title: Text('$activityName Management'),
+                  subtitle: Text('Total time: $totalTime mins'),
                 ),
                 SettingSlider(
-                  title: '$activityName Duration',
+                  title: '$activityName Session Duration',
                   min: 0,
                   max: 120,
                   divisions: 12,
@@ -61,16 +55,11 @@ class RelaxBlockCard extends StatelessWidget {
                   preferencesBuilder: preferencesBuilder,
                 ),
                 SettingSlider(
-                  title: 'Weekly $activityName Sessions',
+                  title: 'Daily $activityName Sessions',
                   min: 0,
-                  max: 20,
+                  max: 7,
                   divisions: 7,
-                  keyName: weeklySessionsKeyName,
-                  preferencesBuilder: preferencesBuilder,
-                ),
-                SettingSwitch(
-                  title: 'Enable $activityName',
-                  keyName: enableKeyName,
+                  keyName: sessionKeyName,
                   preferencesBuilder: preferencesBuilder,
                 ),
               ],

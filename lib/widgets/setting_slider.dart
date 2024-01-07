@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/user_preferences_builder_bloc.dart';
 import '../bloc/user_preferences_builder_event.dart';
-import '../bloc/user_preferences_builder_state.dart';
 import '../models/user_preferences_builder.dart';
 
 class SettingSlider extends StatelessWidget {
@@ -11,6 +10,7 @@ class SettingSlider extends StatelessWidget {
   final double max;
   final int divisions;
   final String keyName;
+  final UserPreferencesBuilder preferencesBuilder;
 
   const SettingSlider({
     Key? key,
@@ -19,48 +19,40 @@ class SettingSlider extends StatelessWidget {
     required this.max,
     required this.divisions,
     required this.keyName,
+    required this.preferencesBuilder,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserPreferencesBuilderBloc, UserPreferencesBuilderState>(
-      builder: (context, state) {
-        if (state is UserPreferencesBuilderLoaded ||
-            state is UserPreferencesBuilderUpdated) {
-          UserPreferencesBuilder preferencesBuilder;
-          if (state is UserPreferencesBuilderLoaded) {
-            preferencesBuilder = state.preferencesBuilder;
-          } else if (state is UserPreferencesBuilderUpdated) {
-            preferencesBuilder = state.preferencesBuilder;
-          } else {
-            return const SizedBox.shrink();
-          }
+    final value = preferencesBuilder.getValueForKey(keyName).toDouble();
 
-          final value = preferencesBuilder.getValueForKey(keyName).toDouble();
-          return ListTile(
-            title: Text('$title (${value.toInt()})'),
-            trailing: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.66,
-              child: Slider(
-                value: value,
-                min: min,
-                max: max,
-                divisions: divisions,
-                label: '${value.toInt()}',
-                onChanged: (newValue) {
-                  debugPrint(
-                      'Slider Value Changed: $keyName to ${newValue.toInt()}');
-                  BlocProvider.of<UserPreferencesBuilderBloc>(context).add(
-                    UpdateUserPreference(key: keyName, value: newValue.toInt()),
-                  );
-                },
-              ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text('$title (${value.toInt()})'),
+          ),
+          Expanded(
+            flex: 7,
+            child: Slider(
+              value: value,
+              min: min,
+              max: max,
+              divisions: divisions,
+              label: '${value.toInt()}',
+              onChanged: (newValue) {
+                debugPrint(
+                    'Slider Value Changed: $keyName to ${newValue.toInt()}');
+                BlocProvider.of<UserPreferencesBuilderBloc>(context).add(
+                  UpdateUserPreference(key: keyName, value: newValue.toInt()),
+                );
+              },
             ),
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
+          ),
+        ],
+      ),
     );
   }
 }
