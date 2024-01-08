@@ -4,6 +4,13 @@ abstract class BlockEvent {}
 
 class LoadBlocks extends BlockEvent {}
 
+class LoadCustomBlocks extends BlockEvent {}
+
+class InitializeBlocks extends BlockEvent {
+  final List<Block> blocks;
+  InitializeBlocks(this.blocks);
+}
+
 class AddBlock extends BlockEvent {
   final Block block;
 

@@ -1,29 +1,32 @@
 import '../models/block.dart' as model;
-import '../models/user_preferences.dart';
 import '../repositories/block_repository.dart';
 
 class BlockService {
-  final BlockRepository _blockRepository;
+  final BlockRepository blockRepository;
 
-  BlockService(this._blockRepository);
+  BlockService(this.blockRepository);
 
   Future<List<model.Block>> getBlocks() async {
-    return _blockRepository.getBlocks();
+    return blockRepository.getBlocks();
   }
 
   Future<void> insertBlock(model.Block block) async {
-    await _blockRepository.insertBlock(block);
+    await blockRepository.insertBlock(block);
   }
 
   Future<void> updateBlock(model.Block block) async {
-    await _blockRepository.updateBlock(block);
+    await blockRepository.updateBlock(block);
   }
 
   Future<void> deleteBlock(int id) async {
-    await _blockRepository.deleteBlock(id);
+    await blockRepository.deleteBlock(id);
   }
 
   Future<List<model.Block>> getBlocksOfType(String type) async {
-    return _blockRepository.getBlocksOfType(type);
+    return blockRepository.getBlocksOfType(type);
+  }
+
+  Future<List<model.Block>> getCustomBlocks() async {
+    return blockRepository.getCustomBlocks();
   }
 }

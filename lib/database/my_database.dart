@@ -55,4 +55,9 @@ class MyDatabase extends _$MyDatabase {
       ..where((tbl) => tbl.scheduleId.equals(scheduleId));
     return await blocksQuery.get();
   }
+
+  Future<List<Block>> getCustomBlocks() async {
+    return await (select(blocks)..where((tbl) => tbl.origin.equals('custom')))
+        .get();
+  }
 }

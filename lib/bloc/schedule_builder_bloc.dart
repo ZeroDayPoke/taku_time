@@ -4,14 +4,18 @@ import 'schedule_builder_state.dart';
 import '../services/schedule_service.dart';
 import '../models/schedule_builder.dart';
 import '../models/schedule.dart';
+import '../bloc/block_bloc.dart';
+import '../bloc/block_event.dart';
 
 class ScheduleBuilderBloc
     extends Bloc<ScheduleBuilderEvent, ScheduleBuilderState> {
+  final BlockBloc blockBloc;
   final ScheduleService scheduleService;
   final ScheduleBuilder scheduleBuilder;
 
   ScheduleBuilderBloc({
     required this.scheduleService,
+    required this.blockBloc,
   })  : scheduleBuilder = ScheduleBuilder(),
         super(ScheduleBuilderInitial()) {
     on<StartScheduleBuilding>(_onStartScheduleBuilding);
@@ -24,8 +28,11 @@ class ScheduleBuilderBloc
       StartScheduleBuilding event, Emitter<ScheduleBuilderState> emit) async {
     try {
       final activeSchedule = await scheduleService.getCurrentActiveSchedule();
-      scheduleBuilder.reset(activeSchedule);
-      emit(ScheduleBuildingInProgress(scheduleBuilder));
+      if (activeSchedule != null) {
+        scheduleBuilder.reset(activeSchedule);
+        emit(ScheduleBuildingInProgress(scheduleBuilder));
+        blockBloc.add(InitializeBlocks(activeSchedule.blocks));
+      }
     } catch (error) {
       emit(ScheduleBuildingFailure(error.toString()));
     }

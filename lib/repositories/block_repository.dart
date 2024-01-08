@@ -19,6 +19,16 @@ class BlockRepository {
     }
   }
 
+  Future<List<model.Block>> getCustomBlocks() async {
+    try {
+      var blockData = await _db.getCustomBlocks();
+      return blockData.map((e) => _convertToBlockModel(e)).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
   model.Block _convertToBlockModel(Block entity) {
     return model.Block(
       id: entity.id,
